@@ -30,6 +30,23 @@ describe('components registry', () => {
       'LhSelect',
       'LhForm',
       'LhFormItem',
+      'LhBadge',
+      'LhAvatar',
+      'LhSpinner',
+      'LhDivider',
+      'LhSpace',
+      'LhCard',
+      'LhEmpty',
+      'LhSkeleton',
+      'LhSkeletonItem',
+      'LhAlert',
+      'LhProgress',
+      'LhStatistic',
+      'LhDescriptions',
+      'LhTimeline',
+      'LhTimelineItem',
+      'LhCollapse',
+      'LhCollapseItem',
     ])
   })
 

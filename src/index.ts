@@ -20,6 +20,20 @@ import LhDialog from './components/dialog'
 import LhTooltip from './components/tooltip'
 import LhSelect from './components/select'
 import LhForm, { LhFormItem } from './components/form'
+import LhBadge from './components/badge'
+import LhAvatar from './components/avatar'
+import LhSpinner from './components/spinner'
+import LhDivider from './components/divider'
+import LhSpace from './components/space'
+import LhCard from './components/card'
+import LhEmpty from './components/empty'
+import LhSkeleton, { LhSkeletonItem } from './components/skeleton'
+import LhAlert from './components/alert'
+import LhProgress from './components/progress'
+import LhStatistic from './components/statistic'
+import LhDescriptions from './components/descriptions'
+import LhTimeline, { LhTimelineItem } from './components/timeline'
+import LhCollapse, { LhCollapseItem } from './components/collapse'
 
 /** 组件注册表（registry 测试断言此清单；新增组件必须登记） */
 export const lhComponents = [
@@ -38,6 +52,23 @@ export const lhComponents = [
   LhSelect,
   LhForm,
   LhFormItem,
+  LhBadge,
+  LhAvatar,
+  LhSpinner,
+  LhDivider,
+  LhSpace,
+  LhCard,
+  LhEmpty,
+  LhSkeleton,
+  LhSkeletonItem,
+  LhAlert,
+  LhProgress,
+  LhStatistic,
+  LhDescriptions,
+  LhTimeline,
+  LhTimelineItem,
+  LhCollapse,
+  LhCollapseItem,
 ]
 
 /** Vue2 插件：全量注册 */
@@ -73,6 +104,23 @@ export {
   LhSelect,
   LhForm,
   LhFormItem,
+  LhBadge,
+  LhAvatar,
+  LhSpinner,
+  LhDivider,
+  LhSpace,
+  LhCard,
+  LhEmpty,
+  LhSkeleton,
+  LhSkeletonItem,
+  LhAlert,
+  LhProgress,
+  LhStatistic,
+  LhDescriptions,
+  LhTimeline,
+  LhTimelineItem,
+  LhCollapse,
+  LhCollapseItem,
 }
 
 // locale 响应式适配层与 composables 是公共 API（plus 平价）
