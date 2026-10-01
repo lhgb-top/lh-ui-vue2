@@ -53,14 +53,19 @@
     "build:styles": "node scripts/build-styles.mjs",
     "build:dts": "tsc -p tsconfig.build.json",
     "verify:dts": "node scripts/verify-dts.mjs",
-    "lint": "eslint src tests scripts vite.config.ts vitest.config.ts rollup.dts.config.js",
-    "lint:fix": "eslint src tests scripts vite.config.ts vitest.config.ts rollup.dts.config.js --fix",
+    "lint": "eslint src tests scripts dev docs/.vitepress vite.config.ts vitest.config.ts rollup.dts.config.js",
+    "lint:fix": "eslint src tests scripts dev docs/.vitepress vite.config.ts vitest.config.ts rollup.dts.config.js --fix",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "changeset": "changeset",
     "changeset:status": "changeset status",
-    "prepublishOnly": "pnpm run build"
+    "prepublishOnly": "pnpm run build",
+    "dev": "vite --config dev/vite.config.ts",
+    "build:demo": "vite build --config dev/vite.config.ts --mode demo && node scripts/copy-demo.mjs",
+    "docs:dev": "pnpm --dir docs dev",
+    "docs:build": "pnpm --dir docs build",
+    "docs:preview": "pnpm --dir docs preview"
   },
   "dependencies": {
     "@lh-ui/share": "link:../lh-ui-share"

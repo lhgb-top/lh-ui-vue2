@@ -7,3 +7,8 @@ coverage/
 *.tgz
 .DS_Store
 *.tgz
+dev-dist/
+docs/public/demos/
+docs/.vitepress/dist/
+docs/.vitepress/cache/
+docs/node_modules/
