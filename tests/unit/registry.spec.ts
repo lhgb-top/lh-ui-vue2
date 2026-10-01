@@ -47,6 +47,17 @@ describe('components registry', () => {
       'LhTimelineItem',
       'LhCollapse',
       'LhCollapseItem',
+      'LhBreadcrumb',
+      'LhBreadcrumbItem',
+      'LhPagination',
+      'LhTabs',
+      'LhTabPane',
+      'LhSteps',
+      'LhStep',
+      'LhInputNumber',
+      'LhRate',
+      'LhSegmented',
+      'LhSlider',
     ])
   })
 

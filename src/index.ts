@@ -34,6 +34,14 @@ import LhStatistic from './components/statistic'
 import LhDescriptions from './components/descriptions'
 import LhTimeline, { LhTimelineItem } from './components/timeline'
 import LhCollapse, { LhCollapseItem } from './components/collapse'
+import LhBreadcrumb, { LhBreadcrumbItem } from './components/breadcrumb'
+import LhPagination from './components/pagination'
+import LhTabs, { LhTabPane } from './components/tabs'
+import LhSteps, { LhStep } from './components/steps'
+import LhInputNumber from './components/input-number'
+import LhRate from './components/rate'
+import LhSegmented from './components/segmented'
+import LhSlider from './components/slider'
 
 /** 组件注册表（registry 测试断言此清单；新增组件必须登记） */
 export const lhComponents = [
@@ -69,6 +77,17 @@ export const lhComponents = [
   LhTimelineItem,
   LhCollapse,
   LhCollapseItem,
+  LhBreadcrumb,
+  LhBreadcrumbItem,
+  LhPagination,
+  LhTabs,
+  LhTabPane,
+  LhSteps,
+  LhStep,
+  LhInputNumber,
+  LhRate,
+  LhSegmented,
+  LhSlider,
 ]
 
 /** Vue2 插件：全量注册 */
@@ -121,6 +140,17 @@ export {
   LhTimelineItem,
   LhCollapse,
   LhCollapseItem,
+  LhBreadcrumb,
+  LhBreadcrumbItem,
+  LhPagination,
+  LhTabs,
+  LhTabPane,
+  LhSteps,
+  LhStep,
+  LhInputNumber,
+  LhRate,
+  LhSegmented,
+  LhSlider,
 }
 
 // locale 响应式适配层与 composables 是公共 API（plus 平价）
