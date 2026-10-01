@@ -18,6 +18,8 @@ import LhCheckbox, { LhCheckboxGroup } from './components/checkbox'
 import LhRadio, { LhRadioGroup } from './components/radio'
 import LhDialog from './components/dialog'
 import LhTooltip from './components/tooltip'
+import LhSelect from './components/select'
+import LhForm, { LhFormItem } from './components/form'
 
 /** 组件注册表（registry 测试断言此清单；新增组件必须登记） */
 export const lhComponents = [
@@ -33,6 +35,9 @@ export const lhComponents = [
   LhRadioGroup,
   LhDialog,
   LhTooltip,
+  LhSelect,
+  LhForm,
+  LhFormItem,
 ]
 
 /** Vue2 插件：全量注册 */
@@ -65,6 +70,9 @@ export {
   LhRadioGroup,
   LhDialog,
   LhTooltip,
+  LhSelect,
+  LhForm,
+  LhFormItem,
 }
 
 // locale 响应式适配层与 composables 是公共 API（plus 平价）

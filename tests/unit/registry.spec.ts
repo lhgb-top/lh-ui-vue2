@@ -27,6 +27,9 @@ describe('components registry', () => {
       'LhRadioGroup',
       'LhDialog',
       'LhTooltip',
+      'LhSelect',
+      'LhForm',
+      'LhFormItem',
     ])
   })
 
