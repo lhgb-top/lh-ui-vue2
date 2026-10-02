@@ -11,12 +11,14 @@ const TimelineItemComp = LhTimelineItem as unknown as ComponentOptions<Vue>
 
 // VTU v1 的 scopedSlots 不传 createElement：用宿主组件 render 传子组件
 const mountTimeline = (propsData: Record<string, unknown> = {}, items = 3) => {
+  // Host 需声明并透传 props：闭包捕获的 propsData 无法响应外层 setProps
   const Host = defineComponent({
     name: 'TimelineHost',
-    render(this: Vue, h: CreateElement) {
+    props: ['mode'],
+    render(this: Vue & { mode?: string }, h: CreateElement) {
       return h(
         TimelineComp,
-        { props: propsData },
+        { props: { mode: this.mode, ...propsData } },
         Array.from({ length: items }, (_, i) =>
           h(
             TimelineItemComp,
@@ -51,6 +53,16 @@ describe('LhTimeline Component', () => {
 
   it('applies the alternate layout classes', () => {
     const wrapper = mountTimeline({ mode: 'alternate' })
+    expect(wrapper.find('.lh-timeline--alternate').exists()).toBe(true)
+    expect(wrapper.find('.lh-timeline__item--right').exists()).toBe(true)
+  })
+
+  it('propagates dynamic mode changes to item sides', async () => {
+    const wrapper = mountTimeline()
+    expect(wrapper.find('.lh-timeline--alternate').exists()).toBe(false)
+
+    // 红线 #6：mode 提供的是 computed ref，动态切换要传导给 item 侧向类名
+    await wrapper.setProps({ mode: 'alternate' })
     expect(wrapper.find('.lh-timeline--alternate').exists()).toBe(true)
     expect(wrapper.find('.lh-timeline__item--right').exists()).toBe(true)
   })

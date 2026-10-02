@@ -1,10 +1,11 @@
-import type { InjectionKey } from 'vue'
+import type { InjectionKey, Ref } from 'vue'
 import type { SxProps } from '@lh-ui/share/core/shared/sx'
 import type { LhTimelineMode } from '@lh-ui/share/core/timeline'
 
 /** 父级向 Item 下发的上下文 */
 export interface LhTimelineContext {
-  mode: LhTimelineMode
+  /** 红线 #6：provide computed ref 本体，禁止 props 快照 */
+  mode: Ref<LhTimelineMode>
   /** 注册自身并返回 token；index = tokens 中位置（setup 顺序） */
   register: (token: object) => void
   unregister: (token: object) => void

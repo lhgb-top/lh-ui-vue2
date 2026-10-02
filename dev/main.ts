@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import LhUIVue2 from '../src'
+import '@lh-ui/share/theme.css'
+import '@lh-ui/share/styles.css'
 import './demos'
 
 // playground：全量注册冒烟

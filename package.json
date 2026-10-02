@@ -63,7 +63,7 @@
     "prepublishOnly": "pnpm run build",
     "dev": "vite --config dev/vite.config.ts",
     "build:demo": "vite build --config dev/vite.config.ts --mode demo && node scripts/copy-demo.mjs",
-    "docs:dev": "pnpm --dir docs dev",
+    "docs:dev": "pnpm --dir docs dev -port 5177",
     "docs:build": "pnpm --dir docs build",
     "docs:preview": "pnpm --dir docs preview"
   },

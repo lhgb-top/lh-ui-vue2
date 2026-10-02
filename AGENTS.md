@@ -122,3 +122,31 @@ space / spinner 已有 `index.ts` + `src/` 五件套 + 对应单测，但**尚�
 
 单测、构建、typecheck、lint 由**用户**运行；AI 交付后列出命令清单，
 未经验证不得标注 ✅（写「已交付（待手动验证）」）。例外：用户在当次请求中明确授权时方可代跑并如实记录。
+
+## M2 沉淀的 2.7 实战红线（2026-10-02）
+
+移植 plus 组件时逐条对照；均已由 Wave 1-4 的真实踩坑验证：
+
+1. **模板单根**：`<slot>`、`<template v-if>`、多根都禁止作根。必要的中性容器用
+   `style="display: contents"`（如 skeleton 真实内容分支、breadcrumb 双 li、notification 多区域根）。
+2. **false 值 aria 属性会被移除**：`aria-selected/checked/expanded/hidden` 一律写
+   `:aria-x="cond ? 'true' : 'false'"`，与 Vue3 渲染对齐。
+3. **运行时 props 不因 default 收窄 undefined**：胶水层调用 core 纯函数时统一 `?? 默认值` / `!!props.x`。
+4. **`reactive([])` 根值数组在 computed/watch 中不可追踪**（Vue-2-only 限制，有运行时告警）——
+   服务队列等数组状态一律 `ref<T[]>([])`，模板对 ref 自动解包。
+5. **`getCurrentInstance()` 只有 `proxy`**：占位 vnode 读 `proxy.$vnode.componentOptions.propsData`
+   （受控 prop 探测等），不存在 Vue3 的 `instance.vnode`。
+6. **插槽 vnode 无 `.type`/`.props`**：组件判定走 `componentOptions.Ctor.options.name`，
+   props 走 `componentOptions.propsData`；`<template v-for>` 不能挂 key，key 落真实子元素。
+7. **插槽非响应式**：父组件重渲染导致插槽内容变化时，需在 `updated` 里按签名比对后落值；
+   无条件 bump 版本号会「updated → 重渲染 → updated」死循环（曾挂起整套测试）。
+8. **无函数 ref**：模板不支持 `:ref="fn"`——按 data-name/类名查询 DOM；事件里要跨 nextTick 用的
+   `event.currentTarget` 必须同步捕获（派发结束后被置空）。
+9. **`v-bind` 对象不携带监听器**：动态组件的 click 等拆成 `v-bind="bind"` + `v-on="on"`。
+10. **transition-group 离场在 jsdom 靠 rAF 推进**：测试断言元素移除要用
+    `await new Promise(r => setTimeout(r, 150))`，`await nextTick()` 等不到。
+11. **VTU v1**：`propsData`（非 props）；scopedSlots/slots 函数不传 `h`——带 props 的子组件用宿主
+    组件 render（`ComponentOptions<Vue>` 收窄）+ `on: {...}` 转发事件；`destroy()` 非 `unmount()`；
+    WrapperArray 只有 `.at(i)!`，无 find/map/every/数字索引；`element` 触碰 style/value 前收窄 HTMLElement。
+12. **服务单例（message/notification）**：host 容器常驻，测试不能清 body；只 closeAll + 等帧。
+    Vue2 模板 condense 会在插值两侧留空格，文本断言加 `.trim()`。

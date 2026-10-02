@@ -18,3 +18,12 @@ export function withInstall(name: string, sfc: unknown): LhInstallableComponent 
   }
   return component
 }
+
+/** 命令式服务条目（Message/Notification/Loading）：install 注册各自 host 组件 */
+export interface LhServiceEntry {
+  name: string
+  install?: (Vue: VueConstructor) => void
+}
+
+/** 注册表条目：常规组件或命令式服务 */
+export type LhRegistryEntry = LhInstallableComponent | LhServiceEntry

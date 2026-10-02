@@ -6,7 +6,8 @@ import type { LhCollapseKey } from '@lh-ui/share/core/collapse'
 /** 父级向 Item 下发的上下文 */
 export interface LhCollapseContext {
   activeKeys: Ref<LhCollapseKey[]>
-  accordion: boolean
+  /** 红线 #6：provide computed ref 本体，禁止 props 快照 */
+  accordion: Ref<boolean>
   toggle: (key: LhCollapseKey) => void
 }
 

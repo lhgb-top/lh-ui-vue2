@@ -31,7 +31,7 @@ export function useLhCollapse(props: LhCollapseProps, emit: LhCollapseEmits) {
   // 红线 #6：provide 的是 ref 本体，Item 侧读 .value 保持响应式
   provide(LH_COLLAPSE_CONTEXT_KEY, {
     activeKeys,
-    accordion: props.accordion,
+    accordion: computed(() => !!props.accordion),
     toggle,
   })
 

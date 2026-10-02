@@ -15,7 +15,7 @@ export function useLhTimeline(props: LhTimelineProps) {
   const tokens = reactive<object[]>([])
 
   provide(LH_TIMELINE_CONTEXT_KEY, {
-    mode: props.mode ?? 'left',
+    mode: computed(() => props.mode ?? 'left'),
     tokens,
     register: (token) => tokens.push(token),
     unregister: (token) => {
@@ -44,7 +44,7 @@ export function useLhTimelineItem(props: LhTimelineItemProps) {
   const index = computed(() => (context ? context.tokens.indexOf(token.value) : 0))
   const isLast = computed(() => (context ? index.value === context.tokens.length - 1 : true))
   const side = computed(() =>
-    context?.mode === 'alternate' ? getTimelineSide(index.value) : 'left',
+    context?.mode.value === 'alternate' ? getTimelineSide(index.value) : 'left',
   )
 
   const itemClasses = computed(() =>

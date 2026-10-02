@@ -58,6 +58,30 @@ describe('components registry', () => {
       'LhRate',
       'LhSegmented',
       'LhSlider',
+      'LhPopover',
+      'LhPopconfirm',
+      'LhDrawer',
+      'LhDropdown',
+      'LhDropdownItem',
+      'LhMessage',
+      'LhNotification',
+      'LhLoading',
+      'LhLayout',
+      'LhLayoutHeader',
+      'LhLayoutAside',
+      'LhLayoutMain',
+      'LhLayoutFooter',
+      'LhRow',
+      'LhCol',
+      'LhAffix',
+      'LhBackTop',
+      'LhAnchor',
+      'LhImage',
+      'LhMenu',
+      'LhMenuItem',
+      'LhSubMenu',
+      'LhMenuItemGroup',
+      'LhVirtualList',
     ])
   })
 
@@ -68,8 +92,21 @@ describe('components registry', () => {
       .filter((d) => d.isDirectory() && existsSync(join(dir, d.name, 'index.ts')))
       .map((d) => d.name)
     const registered = new Set(lhComponents.map((c) => c.name))
+    // 目录名推不出注册名的目录在此登记别名（如 grid 目录注册 LhRow/LhCol）
+    const DIR_ALIASES: Record<string, string[]> = {
+      grid: ['LhRow', 'LhCol'],
+      backtop: ['LhBackTop'],
+    }
     for (const name of dirs) {
-      expect(registered, `组件目录 ${name} 未注册到 lhComponents`).toContain(toComponentName(name))
+      const aliases = DIR_ALIASES[name] ?? []
+      if (aliases.length > 0) {
+        expect(
+          aliases.some((alias) => registered.has(alias)),
+          `组件目录 ${name} 未注册到 lhComponents`,
+        ).toBe(true)
+      } else {
+        expect(registered, `组件目录 ${name} 未注册到 lhComponents`).toContain(toComponentName(name))
+      }
     }
   })
 })

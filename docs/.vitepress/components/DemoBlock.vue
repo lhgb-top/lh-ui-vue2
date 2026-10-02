@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { withBase } from 'vitepress'
+import { withBase, useData } from 'vitepress'
 
 /**
  * Vue2 版 DemoBlock：VitePress（Vue3）内无法直接渲染 Vue2 SFC，
  * live demo 通过 iframe 加载 dev 沙箱的多页构建产物（docs/.vitepress/public/demos/<name>.html）。
  */
 const props = defineProps<{
-  /** 对应 dev/demos/entries/<name>.html */
+  /** 对应 dev/<name>.html（构建产物归位到 docs/public/demos/<name>.html） */
   name: string
   title?: string
   /** iframe 高度，默认 220 */
@@ -16,7 +16,14 @@ const props = defineProps<{
 
 const showCode = ref(false)
 
-const iframeSrc = computed(() => withBase(`/demos/${props.name}.html`))
+// iframe 是独立文档，不继承站点明暗状态；通过查询参数把主题带进沙箱，
+// demo-main.ts 据此设 data-theme。src 变化时 iframe 自动重载，无需 postMessage。
+const { isDark } = useData()
+
+const iframeSrc = computed(() => {
+  const base = withBase(`/demos/${props.name}.html`)
+  return isDark.value ? `${base}?theme=dark` : base
+})
 const iframeHeight = computed(() => `${props.height ?? 220}px`)
 </script>
 
@@ -36,7 +43,7 @@ const iframeHeight = computed(() => `${props.height ?? 220}px`)
       title="live demo"
     ></iframe>
     <div v-if="showCode" class="demo-block__code">
-      <slot name="code" />
+      <slot />
     </div>
   </div>
 </template>

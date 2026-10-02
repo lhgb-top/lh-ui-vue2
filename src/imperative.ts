@@ -23,22 +23,22 @@ export interface LhMountedInstance {
 }
 
 /**
- * 把组件渲染进 body 末尾的独立容器
+ * 把组件渲染进指定容器（弹层组件可在此渲染内容）
  * @param comp 目标组件（SFC 或组件选项）
  * @param propsData 传给组件的 props
+ * @param container 承载容器（由调用方持有）
  */
-export function mountToBody(
+export function mountToContainer(
   comp: Component,
-  propsData?: Record<string, unknown>,
+  propsData: Record<string, unknown> | undefined,
+  container: HTMLElement,
 ): LhMountedInstance {
-  const container = document.createElement('div')
   const vm = new Vue({
     render: (h: CreateElement): VNode => h(comp, { props: propsData ?? {} }),
   })
   // 离文档渲染后手动插入：$mount() 不带参时 $el 尚未进 DOM，容器时序可控
   vm.$mount()
   const el = vm.$el as HTMLElement
-  document.body.appendChild(container)
   container.appendChild(el)
 
   let destroyed = false
@@ -50,7 +50,27 @@ export function mountToBody(
       if (destroyed) return
       destroyed = true
       vm.$destroy()
-      container.remove()
+      el.remove()
     },
   }
+}
+
+/**
+ * 把组件渲染进 body 末尾的独立容器
+ * @param comp 目标组件（SFC 或组件选项）
+ * @param propsData 传给组件的 props
+ */
+export function mountToBody(
+  comp: Component,
+  propsData?: Record<string, unknown>,
+): LhMountedInstance {
+  const container = document.createElement('div')
+  document.body.appendChild(container)
+  const instance = mountToContainer(comp, propsData, container)
+  const innerDestroy = instance.destroy
+  instance.destroy = () => {
+    innerDestroy()
+    container.remove()
+  }
+  return instance
 }

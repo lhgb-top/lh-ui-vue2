@@ -4,6 +4,12 @@
   --lh-docs-paper: #faf6f0;
 }
 
+/* 暗色取 share var-dark.scss 同名令牌：paper 沿用暗色底 #2A2520，主色取夜青花 #3D649E */
+.dark {
+  --lh-primary-color: #3d649e;
+  --lh-docs-paper: #2a2520;
+}
+
 .demo-iframe {
   width: 100%;
   min-height: 180px;
