@@ -4,16 +4,39 @@
 
 <DemoBlock name="button" title="按钮形态">
 
+<!-- gen-demo-code:begin -->
 ```vue
 <template>
-  <LhButton>默认按钮</LhButton>
-  <LhButton type="primary">主要按钮</LhButton>
-  <LhButton type="primary" plain>朴素按钮</LhButton>
-  <LhButton type="primary" loading>加载中</LhButton>
-  <LhButton href="https://example.com" target="_blank">链接按钮</LhButton>
+  <div class="demo-col">
+    <div class="demo-row">
+      <LhButton>默认按钮</LhButton>
+      <LhButton type="primary">主要按钮</LhButton>
+      <LhButton type="success">成功</LhButton>
+      <LhButton type="warning">警告</LhButton>
+      <LhButton type="danger">危险</LhButton>
+    </div>
+    <div class="demo-row">
+      <LhButton type="primary" plain>朴素按钮</LhButton>
+      <LhButton type="primary" round>圆角按钮</LhButton>
+      <LhButton type="primary" circle icon="lh-icon-search" />
+      <LhButton type="primary" loading>加载中</LhButton>
+      <LhButton type="primary" disabled>禁用</LhButton>
+    </div>
+    <div class="demo-row">
+      <LhButton size="small">小型</LhButton>
+      <LhButton size="medium">默认尺寸</LhButton>
+      <LhButton size="large">大型</LhButton>
+      <LhButton type="primary" block style="max-width: 200px">块级（block）</LhButton>
+    </div>
+    <div class="demo-row">
+      <LhButton icon="lh-icon-search">图标按钮</LhButton>
+      <LhButton native-type="submit" type="primary">原生 type=submit</LhButton>
+      <LhButton href="https://lh-ui.lhgb.top" target="_blank">链接按钮（href）</LhButton>
+    </div>
+  </div>
 </template>
 ```
-
+<!-- gen-demo-code:end -->
 </DemoBlock>
 
 ## Props

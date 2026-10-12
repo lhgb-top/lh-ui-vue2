@@ -1,5 +1,5 @@
 import type { LhPlacement, LhPopconfirmType, LhPopconfirmTrigger } from '@lh-ui/share/core/popconfirm'
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 
 export type { LhPlacement as LhPopconfirmPlacement, LhPopconfirmType, LhPopconfirmTrigger }
 
@@ -11,6 +11,8 @@ export interface LhPopconfirmProps {
   type?: LhPopconfirmType
   /** 展示位置 */
   placement?: LhPlacement
+  /** 主轴方向空间不足时是否翻转方向（默认开启）；设 false 则严格按 placement 定位，允许溢出视口 */
+  flip?: boolean
   /** 触发方式 */
   trigger?: LhPopconfirmTrigger
   /** 确认内容（也可用 content 插槽） */
@@ -40,5 +42,5 @@ export interface LhPopconfirmProps {
   /** 组件级背景花纹，覆盖 ConfigProvider 配置 */
   bgPattern?: string
   /** sx 快速布局属性（作用于触发器根元素） */
-  sx?: SxProps
+  sx?: LhSxProps
 }

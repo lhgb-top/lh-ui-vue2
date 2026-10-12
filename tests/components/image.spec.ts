@@ -51,6 +51,46 @@ describe('LhImage Component', () => {
     expect(document.querySelector('.lh-image-viewer')).toBeNull()
     wrapper.destroy()
   })
+
+  it('gives the preview img button semantics only when preview is enabled', () => {
+    const preview = mount(LhImage, { propsData: { src, alt: 'x', preview: true } })
+    const previewImg = preview.find('img')
+    expect(previewImg.attributes('role')).toBe('button')
+    expect(previewImg.attributes('tabindex')).toBe('0')
+    expect(previewImg.attributes('aria-label')).toBe('预览图片')
+    preview.destroy()
+
+    const plain = mount(LhImage, { propsData: { src, alt: 'x' } })
+    const plainImg = plain.find('img')
+    expect(plainImg.attributes('role')).toBeUndefined()
+    expect(plainImg.attributes('tabindex')).toBeUndefined()
+    expect(plainImg.attributes('aria-label')).toBeUndefined()
+    plain.destroy()
+  })
+
+  it('opens the viewer via Enter / Space when preview is enabled', async () => {
+    const wrapper = mount(LhImage, { propsData: { src, alt: 'x', preview: true }, attachTo: document.body })
+    const img = wrapper.find('img')
+    await img.trigger('keydown', { key: 'Enter' })
+    expect(document.querySelector('.lh-image-viewer')).toBeTruthy()
+    document.querySelector('.lh-image-viewer')?.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }),
+    )
+    await (wrapper.vm as { $nextTick: () => Promise<void> }).$nextTick()
+    expect(document.querySelector('.lh-image-viewer')).toBeNull()
+
+    await img.trigger('keydown', { key: ' ' })
+    expect(document.querySelector('.lh-image-viewer')).toBeTruthy()
+    wrapper.destroy()
+  })
+
+  it('ignores Enter / Space when preview is disabled', async () => {
+    const wrapper = mount(LhImage, { propsData: { src, alt: 'x' }, attachTo: document.body })
+    await wrapper.find('img').trigger('keydown', { key: 'Enter' })
+    await wrapper.find('img').trigger('keydown', { key: ' ' })
+    expect(document.querySelector('.lh-image-viewer')).toBeNull()
+    wrapper.destroy()
+  })
 })
 
 describe('LhImageViewer Component', () => {

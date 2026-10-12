@@ -1,5 +1,5 @@
 import type { InjectionKey, Ref } from 'vue'
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 import type { LhMenuMode } from '@lh-ui/share/core/menu'
 
 /** 父级向 Item / SubMenu / Group 下发的上下文 */
@@ -41,7 +41,7 @@ export interface LhMenuProps {
   /** 手风琴：同时只展开一个子菜单 */
   uniqueOpened?: boolean
   /** sx 快速布局属性 */
-  sx?: SxProps
+  sx?: LhSxProps
 }
 
 /** 叶子项 props */
@@ -50,7 +50,7 @@ export interface LhMenuItemProps {
   index: string
   disabled?: boolean
   /** sx 快速布局属性 */
-  sx?: SxProps
+  sx?: LhSxProps
 }
 
 /** 子菜单 props（可递归嵌套） */
@@ -61,7 +61,7 @@ export interface LhSubMenuProps {
   title?: string
   disabled?: boolean
   /** sx 快速布局属性 */
-  sx?: SxProps
+  sx?: LhSxProps
 }
 
 /** 分组 props */
@@ -69,5 +69,5 @@ export interface LhMenuItemGroupProps {
   /** 分组标题（也可用 title 插槽） */
   title?: string
   /** sx 快速布局属性 */
-  sx?: SxProps
+  sx?: LhSxProps
 }

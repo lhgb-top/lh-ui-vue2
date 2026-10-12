@@ -1,5 +1,5 @@
 import type { InjectionKey } from 'vue'
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 
 /** Layout 上下文：Aside 登记后父级切换为垂直布局 */
 export interface LhLayoutContext {
@@ -13,13 +13,13 @@ export interface LhLayoutProps {
   /** 排列方向（含 Aside 时自动为 vertical） */
   direction?: 'horizontal' | 'vertical'
   /** sx 快速布局属性 */
-  sx?: SxProps
+  sx?: LhSxProps
 }
 
 /** Header / Main / Footer 共用 props */
 export interface LhLayoutSectionProps {
   /** sx 快速布局属性 */
-  sx?: SxProps
+  sx?: LhSxProps
 }
 
 export interface LhLayoutAsideProps extends LhLayoutSectionProps {

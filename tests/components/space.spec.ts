@@ -22,7 +22,7 @@ describe('LhSpace', () => {
   it('applies preset size as spacing token', () => {
     const wrapper = mount(LhSpace, { propsData: { size: 'large' } })
     expect(wrapper.classes()).toContain('lh-space--large')
-    expect(wrapper.attributes('style')).toContain('var(--lh-spacing-large')
+    expect(wrapper.attributes('style')).toContain('var(--lh-spacing-xl')
   })
 
   it('applies numeric size as pixels', () => {

@@ -41,4 +41,38 @@ describe('LhTag', () => {
     await wrapper.find('.lh-tag__close').trigger('click')
     expect(wrapper.find('.lh-tag').emitted('close')).toBeUndefined()
   })
+
+  it('未绑定 click 监听时不进入 tab 序列', () => {
+    const wrapper = mount(LhTag, { slots: { default: 'x' } })
+    const tag = wrapper.find('.lh-tag')
+    expect(tag.attributes('role')).toBeUndefined()
+    expect(tag.attributes('tabindex')).toBeUndefined()
+  })
+
+  it('绑定 click 监听时获得 button 语义且键盘可激活', async () => {
+    const wrapper = mount(LhTag, {
+      slots: { default: 'x' },
+      listeners: { click: () => {} },
+    })
+    const tag = wrapper.find('.lh-tag')
+    expect(tag.attributes('role')).toBe('button')
+    expect(tag.attributes('tabindex')).toBe('0')
+
+    await tag.trigger('keydown', { key: 'Enter' })
+    await tag.trigger('keydown', { key: ' ' })
+    expect(wrapper.emitted('click')).toHaveLength(2)
+  })
+
+  it('disabled 时绑定了 click 监听也不可键盘激活', async () => {
+    const wrapper = mount(LhTag, {
+      propsData: { disabled: true },
+      slots: { default: 'x' },
+      listeners: { click: () => {} },
+    })
+    const tag = wrapper.find('.lh-tag')
+    expect(tag.attributes('role')).toBeUndefined()
+    expect(tag.attributes('tabindex')).toBeUndefined()
+    await tag.trigger('keydown', { key: 'Enter' })
+    expect(wrapper.emitted('click')).toBeUndefined()
+  })
 })

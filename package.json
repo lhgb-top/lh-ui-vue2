@@ -1,8 +1,34 @@
 {
   "name": "@lh-ui/vue2",
   "type": "module",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "lh-ui Vue 2.7 UI 组件库（企业级国风水墨设计），基于 @lh-ui/share 框架无关共享层",
+  "license": "Apache-2.0",
+  "keywords": [
+    "lh-ui",
+    "ui",
+    "components",
+    "component-library",
+    "design-system",
+    "theme",
+    "vue",
+    "vue2",
+    "chinese-style"
+  ],
+  "homepage": "https://www.lhgb.top/lhui/vue2/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lh-ui/lh-ui-vue2.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lh-ui/lh-ui-vue2/issues"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "lib/index.js",
   "module": "es/index.js",
   "unpkg": "dist/lh-ui-vue2.umd.js",
@@ -23,14 +49,14 @@
       "require": "./lib/locale/index.js"
     },
     "./theme": {
-      "types": "./es/theme/index.d.ts",
-      "import": "./es/theme/index.js",
-      "require": "./lib/theme/index.js"
+      "types": "./es/theme.d.ts",
+      "import": "./es/theme.js",
+      "require": "./lib/theme.js"
     },
     "./constants": {
-      "types": "./es/constants/index.d.ts",
-      "import": "./es/constants/index.js",
-      "require": "./lib/constants/index.js"
+      "types": "./es/constants.d.ts",
+      "import": "./es/constants.js",
+      "require": "./lib/constants.js"
     },
     "./style/*": "./es/components/*/style/index.css",
     "./theme.css": "./dist/theme/index.css",
@@ -39,7 +65,8 @@
   "files": [
     "es",
     "lib",
-    "dist"
+    "dist",
+    "CHANGELOG.md"
   ],
   "sideEffects": [
     "**/*.css"
@@ -52,23 +79,28 @@
     "build:umd": "vite build --mode umd",
     "build:styles": "node scripts/build-styles.mjs",
     "build:dts": "tsc -p tsconfig.build.json",
+    "build:local": "node scripts/link-local-share.mjs && pnpm build",
     "verify:dts": "node scripts/verify-dts.mjs",
-    "lint": "eslint src tests scripts dev docs/.vitepress vite.config.ts vitest.config.ts rollup.dts.config.js",
-    "lint:fix": "eslint src tests scripts dev docs/.vitepress vite.config.ts vitest.config.ts rollup.dts.config.js --fix",
-    "typecheck": "tsc --noEmit",
+    "lint": "eslint src tests scripts dev docs/.vuepress docs/scripts vite.config.ts vitest.config.ts rollup.dts.config.js",
+    "lint:fix": "eslint src tests scripts dev docs/.vuepress docs/scripts vite.config.ts vitest.config.ts rollup.dts.config.js --fix",
+    "typecheck": "node scripts/gen-dev-tsconfig.mjs && tsc -p tsconfig.dev.json --noEmit",
+    "typecheck:npm": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "changeset": "changeset",
     "changeset:status": "changeset status",
-    "prepublishOnly": "pnpm run build",
+    "prepublishOnly": "pnpm run build && pnpm run verify:dts",
     "dev": "vite --config dev/vite.config.ts",
-    "build:demo": "vite build --config dev/vite.config.ts --mode demo && node scripts/copy-demo.mjs",
-    "docs:dev": "pnpm --dir docs dev -port 5177",
+    "gen:demo-code": "node scripts/gen-demo-code.mjs",
+    "verify:demo": "node scripts/gen-demo-code.mjs --check",
+    "verify:docs-sync": "node scripts/verify-docs-sync.mjs",
+    "docs:dev": "pnpm --dir docs dev --port 5177",
     "docs:build": "pnpm --dir docs build",
-    "docs:preview": "pnpm --dir docs preview"
+    "docs:preview": "pnpm --dir docs preview",
+    "docs:clean-cache": "pnpm --dir docs clean:cache"
   },
   "dependencies": {
-    "@lh-ui/share": "link:../lh-ui-share"
+    "@lh-ui/share": "^0.3.0"
   },
   "peerDependencies": {
     "vue": "^2.7.0"

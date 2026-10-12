@@ -53,7 +53,7 @@ import { computed } from 'vue'
 import type { PropType } from 'vue'
 import { getNotificationClassNames, getNotificationIconName } from '@lh-ui/share/core/notification'
 import { sxToStyle } from '@lh-ui/share/core/shared/sx'
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 import { t } from '../../../locale'
 import LhIcon from '../../icon'
 
@@ -70,7 +70,7 @@ const props = defineProps({
   showClose: { type: Boolean, default: true },
   closeLabel: { type: String, default: undefined },
   onClick: { type: Function as PropType<() => void>, default: undefined },
-  sx: { type: [Object, Array, String] as PropType<SxProps>, default: undefined },
+  sx: { type: [Object, Array, String] as PropType<LhSxProps>, default: undefined },
 })
 
 const emit = defineEmits(['close'])

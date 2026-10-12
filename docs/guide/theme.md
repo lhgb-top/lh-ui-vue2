@@ -42,12 +42,12 @@ lh-ui 家族的主题体系在 `@lh-ui/share` 定义（唯一源），Vue2 库�
 
 ## 预设主题与预设切换
 
-`@lh-ui/vue2/theme` 转发 share 的 TS 预设（青花瓷、松花绿等），配套 `usePresetTheme`：
+`@lh-ui/vue2/theme` 转发 share 的 TS 预设（青花瓷、松花绿等），配套 `useLhPresetTheme`：
 
 ```ts
-import { usePresetTheme } from '@lh-ui/vue2'
+import { useLhPresetTheme } from '@lh-ui/vue2'
 
-const { preset, setPreset, presets, themeVars } = usePresetTheme()
+const { preset, setPreset, presets, themeVars } = useLhPresetTheme()
 setPreset('songhua') // 写入 :root；themeVars 亦可交给 ConfigProvider 局部作用
 ```
 

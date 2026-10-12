@@ -3,7 +3,8 @@
     class="lh-message"
     :style="{ paddingTop: `${config.offset}px` }"
   >
-    <transition-group name="lh-message-zoom">
+    <!-- tag 缺省时 Vue2 渲染 <span> 包裹层，会把 fixed 容器内的纵向堆叠打乱 -->
+    <transition-group name="lh-message-zoom" tag="div">
       <LhMessageItem
         v-for="record in records"
         :key="record.id"

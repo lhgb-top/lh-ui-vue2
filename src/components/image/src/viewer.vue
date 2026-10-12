@@ -61,7 +61,7 @@
       <button
         type="button"
         class="lh-image-viewer__close"
-        :aria-label="t('dialog.close', '关闭')"
+        :aria-label="t('image.close', '关闭图片预览')"
         @click="emit('close')"
       >✕</button>
     </div>

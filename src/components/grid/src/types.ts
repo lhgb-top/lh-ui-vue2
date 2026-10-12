@@ -1,4 +1,4 @@
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 import type { LhBreakpointSizes, LhColSize } from '@lh-ui/share/core/grid'
 
 /** 子元素主轴上排列 */
@@ -17,7 +17,7 @@ export interface LhRowProps {
   /** 是否换行 */
   wrap?: boolean
   /** sx 快速布局属性 */
-  sx?: SxProps
+  sx?: LhSxProps
 }
 
 export interface LhColProps {
@@ -42,5 +42,5 @@ export interface LhColProps {
   /** 按断点批量声明的响应式尺寸（与 xs~xl 等价，任选其一） */
   sizes?: LhBreakpointSizes
   /** sx 快速布局属性 */
-  sx?: SxProps
+  sx?: LhSxProps
 }

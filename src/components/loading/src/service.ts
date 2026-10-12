@@ -14,8 +14,10 @@ const { nextZIndex } = useLhZIndex()
 
 let loadingSeq = 0
 
-interface ActiveLoading {
+interface LhActiveLoading {
   destroy: () => void
+  /** 遮罩根元素：close 时挂 --leaving 类触发退场动画 */
+  el: HTMLElement
   target: HTMLElement
   lock: boolean
   previousOverflow: string
@@ -23,7 +25,7 @@ interface ActiveLoading {
   inertApplied: boolean
 }
 
-const activeInstances = new Map<number, ActiveLoading>()
+const activeInstances = new Map<number, LhActiveLoading>()
 
 /**
  * 打开加载遮罩：全屏（不传 target）或指定容器。
@@ -61,6 +63,7 @@ export function showLoading(options: LhLoadingOptions = {}): LhLoadingHandle {
 
   activeInstances.set(id, {
     destroy: instance.destroy,
+    el: instance.el,
     target,
     lock,
     previousOverflow,
@@ -73,14 +76,21 @@ export function showLoading(options: LhLoadingOptions = {}): LhLoadingHandle {
   }
 }
 
+/** 退场动画时长（与 share 样式 lh-loading-fade-out 保持一致） */
+const LH_LEAVE_DURATION = 200
+
 export function closeLoading(id: number): void {
   const instance = activeInstances.get(id)
   if (!instance) return
   activeInstances.delete(id)
-  instance.destroy()
-  if (instance.lock) instance.target.style.overflow = instance.previousOverflow
-  instance.restorePosition()
-  if (instance.inertApplied) instance.target.removeAttribute('inert')
+  // 先播退场动画再卸载（reduced-motion 下动画被禁用，延后卸载不产生视觉差异）
+  instance.el.classList.add('lh-loading--leaving')
+  window.setTimeout(() => {
+    instance.destroy()
+    if (instance.lock) instance.target.style.overflow = instance.previousOverflow
+    instance.restorePosition()
+    if (instance.inertApplied) instance.target.removeAttribute('inert')
+  }, LH_LEAVE_DURATION)
 }
 
 /** 关闭该容器上的全部遮罩（指令卸载时兜底） */

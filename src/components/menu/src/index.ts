@@ -9,6 +9,11 @@ import {
   toggleMenuOpen,
 } from '@lh-ui/share/core/menu'
 import { sxToStyle } from '@lh-ui/share/core/shared/sx'
+import {
+  LH_KEYS,
+  isActivationKey,
+  isHomeOrEndKey,
+} from '@lh-ui/share/core/shared/keyboard'
 import { generateId } from '@lh-ui/share/utils'
 import { LH_MENU_KEY } from './types'
 import type { LhMenuContext, LhMenuItemGroupProps, LhMenuItemProps, LhMenuProps, LhSubMenuProps } from './types'
@@ -101,10 +106,9 @@ export function useLhMenu(props: LhMenuProps, emit: LhMenuEmits) {
   function handleKeydown(event: KeyboardEvent): void {
     if (props.mode !== 'vertical') return
     const target = event.target as HTMLElement | null
-    const key = event.key
     let direction: 1 | -1 | null = null
-    if (key === 'ArrowDown') direction = 1
-    else if (key === 'ArrowUp') direction = -1
+    if (event.key === LH_KEYS.ArrowDown) direction = 1
+    else if (event.key === LH_KEYS.ArrowUp) direction = -1
 
     if (direction != null) {
       const items = collectFocusable()
@@ -116,11 +120,11 @@ export function useLhMenu(props: LhMenuProps, emit: LhMenuEmits) {
       return
     }
 
-    if (key === 'Home' || key === 'End') {
+    if (isHomeOrEndKey(event)) {
       const items = collectFocusable()
       if (items.length === 0) return
       event.preventDefault()
-      ;(key === 'Home' ? items[0] : items[items.length - 1]).focus()
+      ;(event.key === LH_KEYS.Home ? items[0] : items[items.length - 1]).focus()
     }
   }
 
@@ -162,7 +166,7 @@ export function useLhMenuItem(props: LhMenuItemProps, emit: LhMenuItemEmits) {
 
   function handleKeydown(event: KeyboardEvent): void {
     if (props.disabled) return
-    if (event.key === 'Enter' || event.key === ' ') {
+    if (isActivationKey(event)) {
       event.preventDefault()
       handleClick()
     }
@@ -228,22 +232,22 @@ export function useLhSubMenu(props: LhSubMenuProps, emit: LhSubMenuEmits) {
   function handleTitleKeydown(event: KeyboardEvent, focusPanel?: () => void): void {
     if (props.disabled) return
     switch (event.key) {
-      case 'Enter':
-      case ' ':
-      case 'ArrowRight': {
+      case LH_KEYS.Enter:
+      case LH_KEYS.Space:
+      case LH_KEYS.ArrowRight: {
         event.preventDefault()
         if (!opened.value) context?.handleToggleOpen(props.index)
         focusPanel?.()
         break
       }
-      case 'ArrowLeft': {
+      case LH_KEYS.ArrowLeft: {
         if (opened.value) {
           event.preventDefault()
           context?.handleToggleOpen(props.index)
         }
         break
       }
-      case 'Escape': {
+      case LH_KEYS.Escape: {
         if (opened.value) {
           event.preventDefault()
           context?.handleToggleOpen(props.index)

@@ -1,4 +1,4 @@
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 
 export interface LhBackTopProps {
   /** 滚动容器（选择器或元素，默认视口） */
@@ -12,5 +12,5 @@ export interface LhBackTopProps {
   /** 是否平滑滚动 */
   smooth?: boolean
   /** sx 快速布局属性 */
-  sx?: SxProps
+  sx?: LhSxProps
 }

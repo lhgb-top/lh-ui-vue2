@@ -8,6 +8,7 @@ import {
 } from '@lh-ui/share/core/tabs'
 import type { LhTabRecord } from '@lh-ui/share/core/tabs'
 import { sxToStyle } from '@lh-ui/share/core/shared/sx'
+import { LH_KEYS } from '@lh-ui/share/core/shared/keyboard'
 import { generateId } from '@lh-ui/share/utils'
 import { LH_TABS_KEY } from './types'
 import type { LhTabsProps } from './types'
@@ -77,9 +78,13 @@ export function useLhTabs(props: LhTabsProps, emit: LhTabsEmits) {
   const innerActive = ref<string | null>(null)
   const idPrefix = generateId('lh-tabs')
 
-  const activeName = computed(() =>
-    resolveActiveName(records.value, props.modelValue ?? innerActive.value),
-  )
+  // modelValue 可能以数值传入（计数器、索引计算等），与字符串页签名比较前归一化；
+  // null/undefined 保持原样走「第一个可用页签」兜底，其余一律 String 化——
+  // 否则空串页签的显式绑定会被当作「未传值」吞掉
+  const activeName = computed(() => {
+    const raw = props.modelValue ?? innerActive.value
+    return resolveActiveName(records.value, raw == null ? null : String(raw))
+  })
 
   function setActive(name: string) {
     const pane = records.value.find((record) => record.name === name)
@@ -113,16 +118,16 @@ export function useLhTabs(props: LhTabsProps, emit: LhTabsEmits) {
     const currentName = target?.dataset?.name
     if (!currentName) return
 
-    if (event.key === 'Delete') {
+    if (event.key === LH_KEYS.Delete) {
       if (props.closable) removePane(currentName)
       return
     }
 
     let direction: 'next' | 'prev' | 'first' | 'last' | null = null
-    if (event.key === 'ArrowRight' || event.key === 'ArrowDown') direction = 'next'
-    else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') direction = 'prev'
-    else if (event.key === 'Home') direction = 'first'
-    else if (event.key === 'End') direction = 'last'
+    if (event.key === LH_KEYS.ArrowRight || event.key === LH_KEYS.ArrowDown) direction = 'next'
+    else if (event.key === LH_KEYS.ArrowLeft || event.key === LH_KEYS.ArrowUp) direction = 'prev'
+    else if (event.key === LH_KEYS.Home) direction = 'first'
+    else if (event.key === LH_KEYS.End) direction = 'last'
     if (!direction) return
 
     event.preventDefault()

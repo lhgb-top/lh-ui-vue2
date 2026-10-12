@@ -3,6 +3,7 @@ import type { LhCardProps } from './types'
 import { useLhConfigContext } from '../../config-provider/src/index'
 import { getCardClassNames, getCardInteractivity, isCardInteractive } from '@lh-ui/share/core/card'
 import { sxToStyle } from '@lh-ui/share/core/shared/sx'
+import { isActivationKey } from '@lh-ui/share/core/shared/keyboard'
 import { useLhComponentTheme } from '../../../composables'
 
 /**
@@ -50,7 +51,7 @@ export function useLhCard(props: LhCardProps) {
     ) {
       return
     }
-    if (e.key === 'Enter' || e.key === ' ') {
+    if (isActivationKey(e)) {
       e.preventDefault()
       emit('click', e)
     }

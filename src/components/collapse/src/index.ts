@@ -1,4 +1,4 @@
-import { computed, provide, ref } from 'vue'
+import { computed, provide, ref, watch } from 'vue'
 import { normalizeActiveKeys, toggleCollapseKey } from '@lh-ui/share/core/collapse'
 import type { LhCollapseKey } from '@lh-ui/share/core/collapse'
 import { sxToStyle } from '@lh-ui/share/core/shared/sx'
@@ -17,6 +17,15 @@ export interface LhCollapseEmits {
  */
 export function useLhCollapse(props: LhCollapseProps, emit: LhCollapseEmits) {
   const activeKeys = ref<LhCollapseKey[]>(normalizeActiveKeys(props.modelValue))
+
+  // 受控同步：外部更新 modelValue 后内部态必须跟随，否则 aria-expanded 与
+  // 面板展开态永不回显（照 checkbox group 的受控范式）
+  watch(
+    () => props.modelValue,
+    (val) => {
+      if (val !== undefined) activeKeys.value = normalizeActiveKeys(val)
+    },
+  )
 
   function toggle(key: LhCollapseKey): void {
     if (props.modelValue !== undefined) {

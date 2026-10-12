@@ -1,4 +1,4 @@
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 
 export interface LhVirtualListProps {
   /** 数据源（项渲染由 default 插槽负责） */
@@ -12,5 +12,5 @@ export interface LhVirtualListProps {
   /** 过扫描项数 */
   overscan?: number
   /** sx 快速布局属性 */
-  sx?: SxProps
+  sx?: LhSxProps
 }

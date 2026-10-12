@@ -1,4 +1,4 @@
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 
 export interface LhSwitchProps {
   modelValue?: boolean
@@ -9,7 +9,7 @@ export interface LhSwitchProps {
   activeText?: string
   inactiveText?: string
   /** sx 快速布局属性 */
-  sx?: SxProps
+  sx?: LhSxProps
 }
 
 export type LhSwitchSize = 'small' | 'medium' | 'large'

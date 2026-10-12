@@ -40,12 +40,13 @@ export default { name: 'LhBackTop' }
 import type { PropType } from 'vue'
 import { useLhBackTop } from './index'
 import type { LhBackTopProps } from './types'
+import { isValidElementOrSelector } from '../../../utils/element-prop'
 
 /**
  * 2.7 type-only defineProps 不支持跨文件 interface：运行时声明 + PropType（红线 #2）
  */
 const props = defineProps({
-  target: { type: [String, Object] as PropType<string | HTMLElement>, default: undefined },
+  target: { validator: isValidElementOrSelector, default: undefined } as PropType<string | HTMLElement>,
   // 与 core 的 LH_BACKTOP_VISIBILITY_HEIGHT_DEFAULT 保持一致
   visibilityHeight: { type: Number, default: 200 },
   right: { type: Number, default: 40 },

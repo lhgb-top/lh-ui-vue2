@@ -11,6 +11,7 @@ import { useLhComponentTheme, useLhZIndex } from '../../../composables'
 import { generateId } from '@lh-ui/share/utils'
 import { getPopperClass, getPopperStyle, getDefaultDelay } from '@lh-ui/share/core/tooltip'
 import { sxToStyle } from '@lh-ui/share/core/shared/sx'
+import { isEscapeKey } from '@lh-ui/share/core/shared/keyboard'
 
 /**
  * Tooltip Composable
@@ -45,6 +46,8 @@ export function useLhTooltip(props: LhTooltipProps, popperHostRef: Ref<HTMLEleme
     visible: isVisible,
     placement: computed(() => props.placement || 'top'),
     gap: 8,
+    // 严格按 placement 定位时关闭自动翻转（默认开启，与 Popover/Popconfirm/Dropdown 一致）
+    flip: computed(() => props.flip ?? true),
     // 触发器滚出视口即收起提示，避免 fixed 弹层浮在页面内容之上
     onScrollOut: () => {
       hide()
@@ -78,7 +81,7 @@ export function useLhTooltip(props: LhTooltipProps, popperHostRef: Ref<HTMLEleme
 
   /** 键盘 Esc 关闭（对齐 APG tooltip pattern） */
   function onKeydown(event: KeyboardEvent) {
-    if (event.key === 'Escape' && isVisible.value && !isControlled.value) hide()
+    if (isEscapeKey(event) && isVisible.value && !isControlled.value) hide()
   }
 
   // 同步外部 visible
@@ -137,7 +140,8 @@ export function useLhTooltip(props: LhTooltipProps, popperHostRef: Ref<HTMLEleme
       props.bgColor || (props.type ? `var(--lh-${props.type}-color, var(--lh-primary-color))` : undefined)
     if (bg) {
       style['--lh-tooltip-bg'] = bg
-      style['--lh-tooltip-text'] = '#fff'
+      // 彩底上的文字色走语义令牌（浅主色预设下写死 #fff 对比度不足 AA）
+      style['--lh-tooltip-text'] = 'var(--lh-color-on-primary, #fff)'
       // 箭头颜色同步
       style['--lh-tooltip-arrow-color'] = bg
     }

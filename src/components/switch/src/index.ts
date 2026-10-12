@@ -4,7 +4,7 @@ import { sxToStyle } from '@lh-ui/share/core/shared/sx'
 import type { LhSwitchProps } from './types'
 import { LH_FORM_ITEM_CONTEXT_KEY } from '../../form/src/types'
 
-export interface SwitchEmit {
+export interface LhSwitchEmit {
   (event: 'input', value: boolean): void
   (event: 'change', value: boolean): void
 }
@@ -12,7 +12,7 @@ export interface SwitchEmit {
 /**
  * Switch 组件 Composable（纯逻辑在 @lh-ui/share/core/switch）
  */
-export function useLhSwitch(props: LhSwitchProps, emit: SwitchEmit) {
+export function useLhSwitch(props: LhSwitchProps, emit: LhSwitchEmit) {
   const sxStyle = computed(() => sxToStyle(props.sx ?? {}))
 
   const state = computed(() => ({

@@ -13,7 +13,8 @@
       aria-live="polite"
       :aria-label="position"
     >
-      <transition-group name="lh-notification-slide">
+      <!-- tag 缺省时 Vue2 渲染 <span> 包裹层，会破坏卡片的纵向堆叠 -->
+      <transition-group name="lh-notification-slide" tag="div">
         <LhNotificationItem
           v-for="record in group"
           :key="record.id"

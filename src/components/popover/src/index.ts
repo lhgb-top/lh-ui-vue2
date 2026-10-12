@@ -10,12 +10,13 @@ import {
 } from '../../../composables/overlay'
 import { generateId } from '@lh-ui/share/utils'
 import {
-  DEFAULT_POPOVER_PLACEMENT,
+  LH_POPOVER_PLACEMENT_DEFAULT,
   getPopoverClass,
   getPopoverWidthStyle,
   getDefaultDelay,
 } from '@lh-ui/share/core/popover'
 import { sxToStyle } from '@lh-ui/share/core/shared/sx'
+import { isEscapeKey } from '@lh-ui/share/core/shared/keyboard'
 
 export interface LhPopoverEmits {
   /** 双向绑定走 .sync 语义（事件名 update:visible） */
@@ -40,11 +41,13 @@ export function useLhPopover(props: LhPopoverProps, emit: LhPopoverEmits) {
   const popperRef = ref<HTMLElement | null>(null)
   // 2.7 无 Teleport：host 根元素在 mounted 时移到 teleportTarget，卸载时移除防泄漏
   const popperHostRef = ref<HTMLElement | null>(null)
-  const teleportTarget = computed(() =>
-    typeof props.teleportTarget === 'string'
+  const teleportTarget = computed(() => {
+    // SSR / 非 DOM 环境守卫：与 cascader/date-picker/time-picker 的守卫口径一致
+    if (typeof document === 'undefined') return null
+    return typeof props.teleportTarget === 'string'
       ? (document.querySelector(props.teleportTarget) as HTMLElement | null)
-      : (props.teleportTarget ?? document.body),
-  )
+      : (props.teleportTarget ?? document.body)
+  })
   const shouldTeleport = computed(() => (props.teleportTarget ?? 'body') === 'body')
 
   const isVisible = ref(props.visible ?? false)
@@ -52,13 +55,15 @@ export function useLhPopover(props: LhPopoverProps, emit: LhPopoverEmits) {
   // 外部控制模式（trigger 为 manual 且外部传入 visible）
   const isControlled = computed(() => props.trigger === 'manual' && props.visible !== undefined)
 
-  const placement = computed(() => props.placement ?? DEFAULT_POPOVER_PLACEMENT)
+  const placement = computed(() => props.placement ?? LH_POPOVER_PLACEMENT_DEFAULT)
 
   const { popperStyle, actualPlacement, updatePosition } = useLhPopper({
     triggerRef,
     popperRef,
     visible: isVisible,
     placement,
+    // 严格按 placement 定位时关闭自动翻转（默认开启，与 Tooltip/Popconfirm/Dropdown 一致）
+    flip: computed(() => props.flip ?? true),
     // 触发器滚出视口时必须收起：弹出层是 fixed 定位，触发器离开后它仍会以高 z-index
     // 悬浮在页面内容之上。受控模式下同样收起，hide() 会抛出 update:visible 让外部状态同步。
     onScrollOut: () => {
@@ -132,7 +137,7 @@ export function useLhPopover(props: LhPopoverProps, emit: LhPopoverEmits) {
    * ESC 关闭
    */
   function onKeydown(event: KeyboardEvent) {
-    if (event.key === 'Escape' && isVisible.value && !isControlled.value) hide()
+    if (isEscapeKey(event) && isVisible.value && !isControlled.value) hide()
   }
 
   // 同步外部 visible

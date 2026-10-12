@@ -48,7 +48,7 @@ import { computed } from 'vue'
 import type { PropType } from 'vue'
 import { getMessageClassNames, getMessageIconName, getMessageRole } from '@lh-ui/share/core/message'
 import { sxToStyle } from '@lh-ui/share/core/shared/sx'
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 import { t } from '../../../locale'
 import LhIcon from '../../icon'
 import LhSpinner from '../../spinner'
@@ -61,7 +61,7 @@ const props = defineProps({
   type: { type: String as PropType<'info' | 'success' | 'warning' | 'danger' | 'loading'>, default: 'info' },
   showClose: { type: Boolean, default: false },
   closeLabel: { type: String, default: undefined },
-  sx: { type: [Object, Array, String] as PropType<SxProps>, default: undefined },
+  sx: { type: [Object, Array, String] as PropType<LhSxProps>, default: undefined },
 })
 
 const emit = defineEmits(['close'])

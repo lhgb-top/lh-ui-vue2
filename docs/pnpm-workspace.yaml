@@ -1,2 +1,6 @@
 allowBuilds:
+  '@parcel/watcher': set this to true or false
+  core-js: set this to true or false
   esbuild: false
+  highlight.js: set this to true or false
+  vuepress: set this to true or false

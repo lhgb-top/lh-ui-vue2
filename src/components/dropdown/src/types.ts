@@ -1,6 +1,6 @@
 import type { InjectionKey, Ref } from 'vue'
 import type { LhDropdownPlacement, LhDropdownTrigger } from '@lh-ui/share/core/dropdown'
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 
 export type { LhDropdownPlacement, LhDropdownTrigger }
 
@@ -12,6 +12,8 @@ export interface LhDropdownProps {
   trigger?: LhDropdownTrigger
   /** 展示位置 */
   placement?: LhDropdownPlacement
+  /** 主轴方向空间不足时是否翻转方向（默认开启）；设 false 则严格按 placement 定位，允许溢出视口 */
+  flip?: boolean
   /** 手动控制的显示状态（:visible.sync） */
   visible?: boolean
   /** 是否禁用 */
@@ -29,7 +31,7 @@ export interface LhDropdownProps {
   /** 组件级背景花纹，覆盖 ConfigProvider 配置 */
   bgPattern?: string
   /** sx 快速布局属性（作用于触发器根元素） */
-  sx?: SxProps
+  sx?: LhSxProps
 }
 
 /**
@@ -46,15 +48,15 @@ export interface LhDropdownItemProps {
 
 /** 注册给子项的菜单上下文 */
 export interface LhDropdownContext {
-  items: Ref<DropdownItemRecord[]>
+  items: Ref<LhDropdownItemRecord[]>
   activeIndex: Ref<number>
-  registerItem(item: DropdownItemRecord): void
-  unregisterItem(item: DropdownItemRecord): void
+  registerItem(item: LhDropdownItemRecord): void
+  unregisterItem(item: LhDropdownItemRecord): void
   onItemClick(command: string | number | undefined): void
 }
 
 /** 运行期菜单项记录 */
-export interface DropdownItemRecord {
+export interface LhDropdownItemRecord {
   el: HTMLElement
   command?: string | number
   disabled?: boolean

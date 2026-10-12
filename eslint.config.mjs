@@ -11,7 +11,6 @@ export default tseslint.config(
       '**/node_modules/**',
       '**/coverage/**',
       '**/dist/**',
-      '**/dev-dist/**',
       '**/cache/**',
       '**/es/**',
       '**/lib/**',

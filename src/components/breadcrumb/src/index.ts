@@ -5,6 +5,7 @@ import {
   getEllipsisBeforeIndex,
 } from '@lh-ui/share/core/breadcrumb'
 import { sxToStyle } from '@lh-ui/share/core/shared/sx'
+import { generateId } from '@lh-ui/share/utils'
 import { LH_BREADCRUMB_KEY } from './types'
 import type { LhBreadcrumbItemProps, LhBreadcrumbProps } from './types'
 
@@ -12,9 +13,9 @@ import type { LhBreadcrumbItemProps, LhBreadcrumbProps } from './types'
  * Breadcrumb 组件 Composable（纯逻辑在 @lh-ui/share/core/breadcrumb；文案走 locale 适配层）
  */
 export function useLhBreadcrumb(props: LhBreadcrumbProps) {
-  // 子项在各自 setup 阶段注册 token，顺序即渲染顺序；
-  // 序号/总数在注册完成的同一微任务批次内收敛，不会产生可见闪烁
-  const itemTokens = ref<symbol[]>([])
+  // 子项 setup 阶段注册 uid（首帧顺序即渲染顺序）；父级 onUpdated 按 DOM 位序重排——
+  // 中段 v-if 的 item 卸载重挂曾被 push 到数组尾，序号/折叠判定与 DOM 顺序脱钩
+  const itemTokens = ref<string[]>([])
   const expanded = ref(false)
 
   const effectiveMax = computed(() => (expanded.value ? 0 : props.maxItems ?? 0))
@@ -38,7 +39,7 @@ export function useLhBreadcrumb(props: LhBreadcrumbProps) {
 
   const rootStyle = computed(() => sxToStyle(props.sx ?? {}))
 
-  return { rootStyle }
+  return { rootStyle, itemTokens }
 }
 
 /**
@@ -47,16 +48,17 @@ export function useLhBreadcrumb(props: LhBreadcrumbProps) {
 export function useLhBreadcrumbItem(props: LhBreadcrumbItemProps) {
   const context = inject(LH_BREADCRUMB_KEY, null)
 
-  // setup 阶段注册 token，顺序即渲染顺序；卸载时注销
-  const token = Symbol('breadcrumb-item')
+  // setup 阶段注册 uid（首帧顺序即渲染顺序）；uid 同步落到 DOM（data-lh-bc-item），
+  // 供父级 onUpdated 按 DOM 位序重排；卸载时注销
+  const uid = generateId('lh-bc-item')
   if (context) {
-    context.itemTokens.value.push(token)
+    context.itemTokens.value.push(uid)
     onBeforeUnmount(() => {
-      context.itemTokens.value = context.itemTokens.value.filter((item) => item !== token)
+      context.itemTokens.value = context.itemTokens.value.filter((item) => item !== uid)
     })
   }
 
-  const ownIndex = computed(() => (context ? context.itemTokens.value.indexOf(token) : -1))
+  const ownIndex = computed(() => (context ? context.itemTokens.value.indexOf(uid) : -1))
   const total = computed(() => (context ? context.itemTokens.value.length : 1))
   const isLast = computed(() => ownIndex.value === total.value - 1)
   const isHidden = computed(() =>
@@ -75,6 +77,7 @@ export function useLhBreadcrumbItem(props: LhBreadcrumbItemProps) {
 
   return {
     ownIndex,
+    uid,
     isLast,
     isHidden,
     showEllipsisBefore,

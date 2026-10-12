@@ -1,5 +1,5 @@
 import type { InjectionKey, Ref } from 'vue'
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 import type { LhTabsPosition, LhTabsType } from '@lh-ui/share/core/tabs'
 
 export interface LhTabsProps {
@@ -14,7 +14,7 @@ export interface LhTabsProps {
   /** 页签位置 */
   tabPosition?: LhTabsPosition
   /** sx 快速布局属性 */
-  sx?: SxProps
+  sx?: LhSxProps
 }
 
 export interface LhTabPaneProps {

@@ -1,6 +1,6 @@
 import type { InjectionKey } from 'vue'
 import type { LhFormRule } from '@lh-ui/share/core/form'
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 
 export type LhFormLabelPosition = 'left' | 'right' | 'top'
 
@@ -11,7 +11,7 @@ export interface LhFormProps {
   labelWidth?: string | number
   inline?: boolean
   /** sx 快速布局属性 */
-  sx?: SxProps
+  sx?: LhSxProps
 }
 
 export interface LhFormItemProps {

@@ -11,13 +11,14 @@ import {
 import { generateId } from '@lh-ui/share/utils'
 import { t } from '../../../locale'
 import {
-  DEFAULT_POPCONFIRM_PLACEMENT,
-  DEFAULT_POPCONFIRM_TYPE,
+  LH_POPCONFIRM_PLACEMENT_DEFAULT,
+  LH_POPCONFIRM_TYPE_DEFAULT,
   getPopconfirmClass,
   getPopconfirmIconName,
   getDefaultDelay,
 } from '@lh-ui/share/core/popconfirm'
 import { sxToStyle } from '@lh-ui/share/core/shared/sx'
+import { isEscapeKey } from '@lh-ui/share/core/shared/keyboard'
 
 export interface LhPopconfirmEmits {
   /** 双向绑定走 .sync 语义（事件名 update:visible） */
@@ -45,13 +46,15 @@ export function useLhPopconfirm(props: LhPopconfirmProps, emit: LhPopconfirmEmit
   const isVisible = ref(props.visible ?? false)
 
   const isControlled = computed(() => props.trigger === 'manual' && props.visible !== undefined)
-  const confirmType = computed(() => props.type ?? DEFAULT_POPCONFIRM_TYPE)
+  const confirmType = computed(() => props.type ?? LH_POPCONFIRM_TYPE_DEFAULT)
 
   const { popperStyle, actualPlacement, updatePosition } = useLhPopper({
     triggerRef,
     popperRef,
     visible: isVisible,
-    placement: computed(() => props.placement ?? DEFAULT_POPCONFIRM_PLACEMENT),
+    placement: computed(() => props.placement ?? LH_POPCONFIRM_PLACEMENT_DEFAULT),
+    // 严格按 placement 定位时关闭自动翻转（默认开启，与 Tooltip/Popover/Dropdown 一致）
+    flip: computed(() => props.flip ?? true),
     // 触发器滚出视口时必须收起：fixed 弹层不会随触发器离开，会悬浮在页面内容之上。
     // 受控模式同样收起，hide() 会抛出 update:visible 让外部状态保持同步。
     onScrollOut: () => {
@@ -119,7 +122,7 @@ export function useLhPopconfirm(props: LhPopconfirmProps, emit: LhPopconfirmEmit
   function onKeydown(event: KeyboardEvent) {
     if (!isVisible.value || isControlled.value) return
     // Esc = 取消（对齐 APG alertdialog：Escape 关闭并视为否定）
-    if (event.key === 'Escape') handleCancel()
+    if (isEscapeKey(event)) handleCancel()
   }
 
   function handleConfirm() {

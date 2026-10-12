@@ -2,42 +2,75 @@
 
 `LhForm` + `LhFormItem` 组合：模型校验（required/自定义规则）、错误展示（`role="alert"`）、子控件 `aria-invalid` 联动、整体 validate/resetFields。
 
-<DemoBlock name="form" title="表单校验" :height="320">
+<DemoBlock name="form" title="表单校验" :height="390">
 
+<!-- gen-demo-code:begin -->
 ```vue
 <template>
-  <LhForm ref="form" :model="form" :rules="rules" label-width="80px">
-    <LhFormItem prop="name" label="姓名" required>
-      <LhInput v-model="form.name" placeholder="请输入姓名" />
-    </LhFormItem>
-    <LhFormItem>
-      <LhButton type="primary" @click="submit">提交</LhButton>
-      <LhButton @click="reset">重置</LhButton>
-    </LhFormItem>
-  </LhForm>
+  <div style="max-width: 640px">
+    <LhForm ref="form" :model="form" :rules="rules" label-width="80px">
+      <LhFormItem prop="name" label="姓名" required>
+        <LhInput v-model="form.name" placeholder="请输入姓名" />
+      </LhFormItem>
+      <LhFormItem prop="genre" label="题材">
+        <LhSelect v-model="form.genre" :options="genres" placeholder="请选择" />
+      </LhFormItem>
+      <LhFormItem>
+        <LhButton type="primary" @click="submit">提交</LhButton>
+        <LhButton @click="reset">重置</LhButton>
+      </LhFormItem>
+    </LhForm>
+    <p class="demo-note">提交结果：{{ result }}</p>
+    <p class="demo-note" style="margin-top: 16px">label-position="top"：</p>
+    <LhForm :model="form2" label-position="top">
+      <LhFormItem prop="name" label="姓名">
+        <LhInput v-model="form2.name" placeholder="标签在上方" />
+      </LhFormItem>
+    </LhForm>
+    <p class="demo-note" style="margin-top: 16px">inline 行内表单：</p>
+    <LhForm :model="form3" inline>
+      <LhFormItem prop="name" label="姓名">
+        <LhInput v-model="form3.name" placeholder="行内" />
+      </LhFormItem>
+      <LhFormItem prop="genre" label="题材">
+        <LhSelect v-model="form3.genre" :options="genres" placeholder="行内" />
+      </LhFormItem>
+    </LhForm>
+  </div>
 </template>
 
 <script>
 export default {
   data: () => ({
-    form: { name: '' },
+    form: { name: '', genre: '' },
+    form2: { name: '' },
+    form3: { name: '', genre: '' },
     rules: { name: [{ required: true, message: '' }] },
+    genres: [
+      { value: 'shan', label: '山水' },
+      { value: 'hua', label: '花鸟' },
+    ],
+    result: '（未提交）',
   }),
   methods: {
     submit() {
-      this.$refs.form.validate().then((ok) => console.log(ok ? '通过' : '失败'))
+      const form = this.$refs.form
+      form.validate().then((ok) => {
+        this.result = ok ? '校验通过 ✓' : '校验失败：姓名必填'
+      })
     },
     reset() {
       this.$refs.form.resetFields()
+      this.result = '（已重置）'
     },
   },
 }
 </script>
 ```
-
+<!-- gen-demo-code:end -->
 </DemoBlock>
 
-## LhForm Props
+## Form Props
 
 | 属性 | 说明 | 类型 | 默认值 |
 | --- | --- | --- | --- |
@@ -47,14 +80,14 @@ export default {
 | labelWidth | 标签宽度 | `string \| number` | — |
 | inline | 行内布局 | `boolean` | `false` |
 
-## LhFormItem Props
+## FormItem Props
 
 | 属性 | 说明 | 类型 | 默认值 |
 | --- | --- | --- | --- |
 | prop | 对应 model 字段路径（支持 `a.b` 深层） | `string` | — |
 | label / required / rules | 标签、必填星号、局部规则（与 form 规则合并） | — | — |
 
-## 实例方法（defineExpose）
+## 方法
 
 | 方法 | 说明 |
 | --- | --- |

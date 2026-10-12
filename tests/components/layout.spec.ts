@@ -41,6 +41,38 @@ describe('LhLayout Component', () => {
     expect(wrapper.find('section').classes()).toContain('lh-layout--vertical')
   })
 
+  it('auto-switches to vertical when header/footer are slotted directly', async () => {
+    // 未显式传 direction 时，槽位直接渲染 Header/Footer → 自动纵向（Element 语义）
+    const wrapper = mountLayout([
+      { comp: HeaderComp, text: '头' },
+      { comp: MainComp, text: '主' },
+      { comp: FooterComp, text: '脚' },
+    ])
+    await (wrapper.vm as Vue).$nextTick()
+    expect(wrapper.find('section').classes()).toContain('lh-layout--vertical')
+  })
+
+  it('keeps explicit horizontal direction even with slotted sections', async () => {
+    // 显式 direction 一票定夺（探测结果不覆盖显式值）
+    const Host = defineComponent({
+      name: 'LayoutHostExplicit',
+      render(this: Vue, h: CreateElement) {
+        return h(
+          LayoutComp,
+          { props: { direction: 'horizontal' } },
+          [
+            h(HeaderComp, {}, '头'),
+            h(MainComp, {}, '主'),
+            h(FooterComp, {}, '脚'),
+          ],
+        )
+      },
+    })
+    const wrapper = mount(Host as unknown as ComponentOptions<Vue>)
+    await (wrapper.vm as Vue).$nextTick()
+    expect(wrapper.find('section').classes()).toContain('lh-layout--horizontal')
+  })
+
   it('labels the aside landmark', () => {
     const wrapper = mount(LhLayoutAside, { propsData: { ariaLabel: '侧边导航' } })
     expect(wrapper.attributes('aria-label')).toBe('侧边导航')

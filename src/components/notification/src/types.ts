@@ -1,4 +1,4 @@
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 import type {
   LhNotificationPosition,
   LhNotificationRecord,
@@ -20,7 +20,7 @@ export interface LhNotificationOptions {
   /** 是否显示关闭按钮（默认 true） */
   showClose?: boolean
   /** sx 快速布局属性 */
-  sx?: SxProps
+  sx?: LhSxProps
   /** 点击卡片回调（传入后卡片可聚焦、以 button 语义呈现） */
   onClick?: () => void
   /** 关闭（含自动与手动）后的回调 */
@@ -50,7 +50,7 @@ export interface LhNotificationProps {
   closeLabel?: string
   /** 传入后卡片可点击 */
   onClick?: () => void
-  sx?: SxProps
+  sx?: LhSxProps
 }
 
 export type { LhNotificationPosition, LhNotificationRecord, LhNotificationType }

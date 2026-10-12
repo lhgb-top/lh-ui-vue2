@@ -40,6 +40,20 @@ describe('LhStatistic', () => {
     expect(wrapper.find('.lh-statistic__value').text()).toBe('不可统计')
   })
 
+  it('preserves big-number strings beyond MAX_SAFE_INTEGER', () => {
+    const wrapper = mount(LhStatistic, {
+      propsData: { value: '9007199254740993' },
+    })
+    expect(wrapper.find('.lh-statistic__value').text()).toBe('9,007,199,254,740,993')
+  })
+
+  it('rounds big-number strings at fixed precision', () => {
+    const wrapper = mount(LhStatistic, {
+      propsData: { value: '9007199254740993.7', precision: 0 },
+    })
+    expect(wrapper.find('.lh-statistic__value').text()).toBe('9,007,199,254,740,994')
+  })
+
   it('supports title and prefix slots', () => {
     const wrapper = mount(LhStatistic, {
       propsData: { value: 1 },

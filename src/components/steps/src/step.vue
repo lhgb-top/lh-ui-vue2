@@ -1,6 +1,7 @@
 <template>
   <li
     v-if="ownIndex >= 0"
+    :data-lh-step-item="uid"
     :class="itemClasses"
     :aria-current="status === 'process' ? 'step' : undefined"
   >
@@ -52,5 +53,5 @@ const props = defineProps({
   icon: { type: String, default: '' },
 })
 
-const { ownIndex, status, isButton, itemClasses, iconChar, headBind, headOn } = useLhStep(props)
+const { ownIndex, uid, status, isButton, itemClasses, iconChar, headBind, headOn } = useLhStep(props)
 </script>

@@ -1,6 +1,6 @@
 import type { LhAvatarShape } from '@lh-ui/share/core/avatar'
 import type { LhComponentSize } from '@lh-ui/share/core/shared'
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 
 export interface LhAvatarProps {
   /** 图片地址；为空时依次回退到图标、文字 */
@@ -18,7 +18,7 @@ export interface LhAvatarProps {
   /** 图片加载模式：fill / contain / cover */
   fit?: 'fill' | 'contain' | 'cover' | 'none' | 'scale-down'
   /** sx 快速布局属性 */
-  sx?: SxProps
+  sx?: LhSxProps
 }
 
 export type LhAvatarSize = LhComponentSize

@@ -1,4 +1,4 @@
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { getAffixClassNames, getAffixFixedStyle, isAffixFixed } from '@lh-ui/share/core/affix'
 import { sxToStyle } from '@lh-ui/share/core/shared/sx'
 import type { LhAffixProps } from './types'
@@ -34,7 +34,12 @@ export function useLhAffix(props: LhAffixProps, emit: LhAffixEmits) {
     const el = placeholderRef.value
     if (!el) return
     const rect = el.getBoundingClientRect()
-    const next = isAffixFixed({ top: rect.top, bottom: rect.bottom }, offsetTop.value, offsetBottom.value)
+    const next = isAffixFixed(
+      { top: rect.top, bottom: rect.bottom },
+      offsetTop.value,
+      offsetBottom.value,
+      window.innerHeight,
+    )
     if (next !== fixed.value) {
       fixed.value = next
       emit('change', next)
@@ -44,7 +49,7 @@ export function useLhAffix(props: LhAffixProps, emit: LhAffixEmits) {
   let observer: IntersectionObserver | null = null
   let scrollTarget: HTMLElement | null = null
 
-  onMounted(() => {
+  function attachListeners(): void {
     const el = placeholderRef.value
     if (!el) return
     if (typeof IntersectionObserver === 'function') {
@@ -56,14 +61,25 @@ export function useLhAffix(props: LhAffixProps, emit: LhAffixEmits) {
     listenerTarget.addEventListener('scroll', updateFixed, { passive: true })
     window.addEventListener('resize', updateFixed)
     updateFixed()
-  })
+  }
 
-  onBeforeUnmount(() => {
+  function detachListeners(): void {
     observer?.disconnect()
     observer = null
     const listenerTarget: HTMLElement | Window | null = scrollTarget ?? window
     listenerTarget?.removeEventListener('scroll', updateFixed)
     window.removeEventListener('resize', updateFixed)
+  }
+
+  onMounted(attachListeners)
+
+  onBeforeUnmount(detachListeners)
+
+  // target 变化（如父级 ref 在 mounted 后才赋值，:target="$refs.x" 场景）：
+  // 先按旧目标解绑，再重新解析并换绑，保证运行时切容器立即生效
+  watch(() => props.target, () => {
+    detachListeners()
+    attachListeners()
   })
 
   const affixClasses = computed(() => getAffixClassNames({ fixed: fixed.value }))
@@ -73,7 +89,7 @@ export function useLhAffix(props: LhAffixProps, emit: LhAffixEmits) {
     return {
       ...getAffixFixedStyle(offsetTop.value, offsetBottom.value),
       zIndex: `var(--lh-affix-z-index, 900)`,
-      width: `${placeholderRef.value?.offsetWidth ?? 'auto'}px`,
+      width: placeholderRef.value ? `${placeholderRef.value.offsetWidth}px` : 'auto',
       ...sxToStyle(props.sx ?? {}),
     }
   })

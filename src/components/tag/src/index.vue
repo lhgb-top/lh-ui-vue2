@@ -1,5 +1,12 @@
 <template>
-  <span :class="tagClasses" :style="sxStyle" @click="handleClick">
+  <span
+    :class="tagClasses"
+    :style="sxStyle"
+    :role="clickable ? 'button' : undefined"
+    :tabindex="clickable ? 0 : undefined"
+    @click="handleClick"
+    @keydown="handleKeydown"
+  >
     <span class="lh-tag__text">
       <slot></slot>
     </span>
@@ -42,5 +49,8 @@ const props = defineProps({
 
 const emit = defineEmits(['click', 'close'])
 
-const { sxStyle, tagClasses, handleClick, handleClose, t } = useLhTag(props, emit)
+const { sxStyle, tagClasses, clickable, handleClick, handleKeydown, handleClose, t } = useLhTag(
+  props,
+  emit,
+)
 </script>

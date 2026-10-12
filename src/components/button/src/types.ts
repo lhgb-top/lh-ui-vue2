@@ -1,4 +1,4 @@
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 import { LH_SIZE_CONST, LH_TYPES_CONST } from '@lh-ui/share/constants'
 
 export interface LhButtonProps {
@@ -20,7 +20,7 @@ export interface LhButtonProps {
   /** 组件级背景花纹，覆盖 ConfigProvider 配置（不受 patternComponents 白名单限制） */
   bgPattern?: string
   /** sx 快速布局属性 */
-  sx?: SxProps
+  sx?: LhSxProps
 }
 
 export const LH_BUTTON_TYPE_CONST = {

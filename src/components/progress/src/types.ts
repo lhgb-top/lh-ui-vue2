@@ -1,5 +1,5 @@
 import type { LhProgressStatus, LhProgressType } from '@lh-ui/share/core/progress'
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 
 export interface LhProgressProps {
   /** 进度百分比 0-100（超出会自动钳制） */
@@ -16,7 +16,7 @@ export interface LhProgressProps {
   /** 自定义文字格式化 */
   format?: (percentage: number) => string
   /** sx 快速布局属性 */
-  sx?: SxProps
+  sx?: LhSxProps
 }
 
 export type { LhProgressStatus, LhProgressType }

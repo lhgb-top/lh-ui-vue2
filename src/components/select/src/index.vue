@@ -12,13 +12,14 @@
     :style="sxStyle"
   >
     <div
+      ref="triggerRef"
       class="lh-select__trigger"
       role="combobox"
       tabindex="0"
       :name="props.name"
       :aria-label="props.ariaLabel"
-      :aria-disabled="props.disabled"
-      :aria-expanded="isOpen"
+      :aria-disabled="props.disabled ? 'true' : 'false'"
+      :aria-expanded="isOpen ? 'true' : 'false'"
       :aria-invalid="!!formItem?.errorMessage || undefined"
       aria-haspopup="listbox"
       @click="toggle"
@@ -32,7 +33,7 @@
           v-if="props.clearable && selectedOption"
           class="lh-select__clear"
           type="button"
-          aria-label="Clear selection"
+          :aria-label="t('select.clear', '清空')"
           @click.stop="clear"
         >
           ×
@@ -46,36 +47,38 @@
       teleportTarget，否则留在原地；卸载时若被移走则主动 remove 防泄漏
     -->
     <div ref="dropdownHostRef" class="lh-select__dropdown-host">
-      <div
-        v-if="isOpen"
-        ref="dropdownRef"
-        class="lh-select__dropdown"
-        :class="{ 'lh-select__dropdown--teleported': shouldTeleport }"
-        :style="dropdownStyle"
-        role="listbox"
-      >
-        <button
-          v-for="(option, index) in props.options"
-          :key="index"
-          class="lh-select__option"
-          :class="{
-            'lh-select__option--selected': isSelected(option),
-            'lh-select__option--highlighted': highlightedIndex === index,
-            'lh-select__option--disabled': option.disabled,
-          }"
-          type="button"
-          role="option"
-          :aria-selected="isSelected(option)"
-          :disabled="option.disabled"
-          @mouseenter="highlightedIndex = index"
-          @click="selectOption(option)"
+      <transition name="lh-select-fade">
+        <div
+          v-if="isOpen"
+          ref="dropdownRef"
+          class="lh-select__dropdown"
+          :class="{ 'lh-select__dropdown--teleported': shouldTeleport }"
+          :style="mergedDropdownStyle"
+          role="listbox"
         >
-          {{ option.label }}
-        </button>
-        <span v-if="!props.options?.length" class="lh-select__empty">
-          <slot name="empty">{{ t('select.noData', '暂无数据') }}</slot>
-        </span>
-      </div>
+          <button
+            v-for="(option, index) in props.options"
+            :key="index"
+            class="lh-select__option"
+            :class="{
+              'lh-select__option--selected': isSelected(option),
+              'lh-select__option--highlighted': highlightedIndex === index,
+              'lh-select__option--disabled': option.disabled,
+            }"
+            type="button"
+            role="option"
+            :aria-selected="isSelected(option) ? 'true' : 'false'"
+            :disabled="option.disabled"
+            @mouseenter="highlightedIndex = index"
+            @click="selectOption(option)"
+          >
+            {{ option.label }}
+          </button>
+          <span v-if="!props.options?.length" class="lh-select__empty">
+            <slot name="empty">{{ t('select.noData', '暂无数据') }}</slot>
+          </span>
+        </div>
+      </transition>
     </div>
   </div>
 </template>
@@ -90,10 +93,14 @@ import { computed, inject, onBeforeUnmount, onMounted, ref } from 'vue'
 import type { PropType } from 'vue'
 import { sxToStyle } from '@lh-ui/share/core/shared/sx'
 import { findSelectOption, getNextEnabledIndex } from '@lh-ui/share/core/select'
+import { LH_KEYS, isEscapeKey } from '@lh-ui/share/core/shared/keyboard'
 import type { LhSelectOption } from './types'
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 import { t } from '../../../locale'
+import { useLhPopper } from '../../../composables/overlay'
+import { useLhZIndex } from '../../../composables'
 import { LH_FORM_ITEM_CONTEXT_KEY } from '../../form/src/types'
+import { isValidElementOrSelector } from '../../../utils/element-prop'
 
 const props = defineProps({
   modelValue: { type: null as unknown as PropType<unknown>, default: undefined },
@@ -105,10 +112,10 @@ const props = defineProps({
   name: { type: String, default: undefined },
   ariaLabel: { type: String, default: undefined },
   popperContainer: {
-    type: [String, Object] as PropType<'body' | HTMLElement | string>,
+    validator: isValidElementOrSelector,
     default: 'body',
-  },
-  sx: { type: [Object, Array, String] as PropType<SxProps>, default: undefined },
+  } as PropType<'body' | HTMLElement | string>,
+  sx: { type: [Object, Array, String] as PropType<LhSxProps>, default: undefined },
 })
 
 const emit = defineEmits(['input', 'change', 'clear'])
@@ -117,12 +124,19 @@ const emit = defineEmits(['input', 'change', 'clear'])
 const sxStyle = computed(() => sxToStyle(props.sx ?? {}))
 
 const rootRef = ref<HTMLElement | null>(null)
+const triggerRef = ref<HTMLElement | null>(null)
 const dropdownRef = ref<HTMLElement | null>(null)
 const dropdownHostRef = ref<HTMLElement | null>(null)
 const formItem = inject(LH_FORM_ITEM_CONTEXT_KEY, null)
 const isOpen = ref(false)
 const highlightedIndex = ref(-1)
-const selectedOption = computed(() => findSelectOption(props.options, props.modelValue))
+const dropdownZIndex = ref<number | undefined>(undefined)
+const { nextZIndex } = useLhZIndex()
+// modelValue 未传时不能匹配 value 为 undefined 的选项：Object.is(undefined, undefined) 恒真，
+// 会让「无 value 的选项」在未选任何项时误显示已选中
+const selectedOption = computed(() =>
+  props.modelValue === undefined ? undefined : findSelectOption(props.options, props.modelValue),
+)
 
 const shouldTeleport = computed(() => !!props.popperContainer)
 
@@ -134,33 +148,34 @@ const teleportTarget = computed<HTMLElement | null>(() => {
   return props.popperContainer
 })
 
-const dropdownStyle = computed<Record<string, string>>(() => {
-  if (!shouldTeleport.value || !rootRef.value) return {}
-  const rect = rootRef.value.getBoundingClientRect()
+// 定位统一走 useLhPopper（flip/shift/滚动重定位与弹层族一致）；下拉宽度始终匹配触发器
+const { popperStyle } = useLhPopper({
+  triggerRef,
+  popperRef: dropdownRef,
+  visible: isOpen,
+  placement: 'bottom-start',
+  gap: 4,
+})
+
+const mergedDropdownStyle = computed<Record<string, string>>(() => {
+  const trigger = triggerRef.value
+  const width = trigger ? `${trigger.offsetWidth}px` : undefined
   return {
-    position: 'fixed',
-    top: `${rect.bottom + 4}px`,
-    left: `${rect.left}px`,
-    width: `${rect.width}px`,
-    zIndex: 2000,
+    ...popperStyle.value,
+    ...(width ? { width } : {}),
+    ...(dropdownZIndex.value != null ? { zIndex: String(dropdownZIndex.value) } : {}),
   }
 })
 
-function updatePosition() {
-  const forceRect = rootRef.value?.getBoundingClientRect()
-  if (forceRect && dropdownRef.value && shouldTeleport.value) {
-    dropdownRef.value.style.top = `${forceRect.bottom + 4}px`
-    dropdownRef.value.style.left = `${forceRect.left}px`
-    dropdownRef.value.style.width = `${forceRect.width}px`
-  }
-}
-
 function isSelected(option: LhSelectOption) {
-  return Object.is(option.value, props.modelValue)
+  // 同上：未传值时对无 value 选项的误匹配必须挡住
+  return props.modelValue !== undefined && Object.is(option.value, props.modelValue)
 }
 
 function open() {
   if (props.disabled) return
+  // 每次打开领取一个新的层级（高于普通内容、低于后打开的弹层）
+  dropdownZIndex.value = nextZIndex()
   isOpen.value = true
   const selectedIndex = props.options.findIndex(isSelected)
   highlightedIndex.value =
@@ -191,28 +206,29 @@ function clear() {
 }
 
 function handleKeydown(event: KeyboardEvent) {
-  if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+  if (event.key === LH_KEYS.ArrowDown || event.key === LH_KEYS.ArrowUp) {
     event.preventDefault()
     if (!isOpen.value) open()
     else
       highlightedIndex.value = getNextEnabledIndex(
         props.options,
         highlightedIndex.value,
-        event.key === 'ArrowDown' ? 1 : -1,
+        event.key === LH_KEYS.ArrowDown ? 1 : -1,
       )
     return
   }
 
-  if (event.key === 'Enter' && isOpen.value && highlightedIndex.value >= 0) {
+  if (event.key === LH_KEYS.Enter && isOpen.value && highlightedIndex.value >= 0) {
     event.preventDefault()
     const option = props.options[highlightedIndex.value]
     if (option) selectOption(option)
   }
 
-  if (event.key === 'Escape') close()
+  if (isEscapeKey(event)) close()
 }
 
-function handleDocumentClick(event: MouseEvent) {
+// mousedown 在 click 处理器之前触发，点选项的 click 冒泡不会先收起面板（与弹层族约定一致）
+function handleDocumentMousedown(event: MouseEvent) {
   const dropdown = dropdownRef.value
   if (rootRef.value && !rootRef.value.contains(event.target as Node)) {
     // teleported 的下拉同样视为内部（host 也在 root 外）
@@ -221,11 +237,9 @@ function handleDocumentClick(event: MouseEvent) {
 }
 
 onMounted(() => {
-  document.addEventListener('click', handleDocumentClick)
+  document.addEventListener('mousedown', handleDocumentMousedown)
+  // Vue2 无 Teleport：dropdown host 移到 teleportTarget（默认 body）
   if (shouldTeleport.value) {
-    window.addEventListener('scroll', updatePosition, true)
-    window.addEventListener('resize', updatePosition)
-    // Vue2 无 Teleport：dropdown host 移到 teleportTarget（默认 body）
     const host = dropdownHostRef.value
     const target = teleportTarget.value
     if (host && target && host.parentElement !== target) {
@@ -235,9 +249,7 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-  document.removeEventListener('click', handleDocumentClick)
-  window.removeEventListener('scroll', updatePosition, true)
-  window.removeEventListener('resize', updatePosition)
+  document.removeEventListener('mousedown', handleDocumentMousedown)
   // host 被移出 $el 子树，卸载时主动移除防泄漏
   dropdownHostRef.value?.remove()
 })

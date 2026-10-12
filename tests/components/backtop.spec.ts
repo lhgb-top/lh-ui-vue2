@@ -66,4 +66,23 @@ describe('LhBackTop Component', () => {
     expect(wrapper.emitted('scrollend')?.[0]).toEqual([420])
     wrapper.destroy()
   })
+
+  it('rebinds to a target element assigned after mount (:target="$refs.x" 场景)', async () => {
+    // 父级 ref 在 mounted 后才赋值：target 先 undefined（回退 window），后变为真实元素
+    const scroller = document.createElement('div')
+    document.body.appendChild(scroller)
+    const wrapper = mount(LhBackTop, {
+      propsData: { visibilityHeight: 200 },
+      attachTo: document.body,
+    })
+    // 挂载后容器才接入：watch 触发解绑 window + 换绑元素
+    await wrapper.setProps({ target: scroller })
+    scroller.scrollTop = 300
+    scroller.dispatchEvent(new Event('scroll'))
+    await vi.waitFor(() => expect(wrapper.find('.lh-backtop').exists()).toBe(true))
+    // 旧目标（window）滚动不再影响可见性
+    window.dispatchEvent(new Event('scroll'))
+    expect(wrapper.find('.lh-backtop').exists()).toBe(true)
+    wrapper.destroy()
+  })
 })

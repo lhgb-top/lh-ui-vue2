@@ -1,15 +1,16 @@
 import { computed, getCurrentInstance, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import type { LhDropdownProps, LhDropdownContext, DropdownItemRecord } from './types'
+import type { LhDropdownProps, LhDropdownContext, LhDropdownItemRecord } from './types'
 import { useLhConfigContext } from '../../config-provider/src/index'
 import { useLhComponentTheme, useLhZIndex } from '../../../composables'
 import { useLhPopper, useLhTrigger, useLhClickOutside } from '../../../composables/overlay'
 import { generateId } from '@lh-ui/share/utils'
 import {
-  DEFAULT_DROPDOWN_PLACEMENT,
+  LH_DROPDOWN_PLACEMENT_DEFAULT,
   getDropdownClass,
   getDropdownMenuStyle,
 } from '@lh-ui/share/core/dropdown'
 import { sxToStyle, focusFirst } from '@lh-ui/share/core/shared'
+import { isEscapeKey, LH_KEYS } from '@lh-ui/share/core/shared/keyboard'
 
 export interface LhDropdownEmits {
   /** 双向绑定走 .sync 语义（事件名 update:visible） */
@@ -37,7 +38,7 @@ export function useLhDropdown(props: LhDropdownProps, emit: LhDropdownEmits) {
   const popperHostRef = ref<HTMLElement | null>(null)
   const isVisible = ref(props.visible ?? false)
 
-  const items = ref<DropdownItemRecord[]>([])
+  const items = ref<LhDropdownItemRecord[]>([])
   const activeIndex = ref(-1)
 
   // 传入 visible 即视为受控：触发器与外部点击不再自行切换显隐。
@@ -51,13 +52,15 @@ export function useLhDropdown(props: LhDropdownProps, emit: LhDropdownEmits) {
     'visible' in (vm?.proxy?.$vnode?.componentOptions?.propsData ?? {}),
   )
 
-  const placement = computed(() => props.placement ?? DEFAULT_DROPDOWN_PLACEMENT)
+  const placement = computed(() => props.placement ?? LH_DROPDOWN_PLACEMENT_DEFAULT)
 
   const { popperStyle, actualPlacement, updatePosition } = useLhPopper({
     triggerRef,
     popperRef,
     visible: isVisible,
     placement,
+    // 严格按 placement 定位时关闭自动翻转（默认开启，与 Tooltip/Popover/Popconfirm 一致）
+    flip: computed(() => props.flip ?? true),
     // 触发器滚出视口时必须收起：fixed 菜单不会随触发器离开，会悬浮在页面内容之上。
     // 受控模式同样收起，hide() 会抛出 update:visible 让外部状态保持同步。
     onScrollOut: () => {
@@ -126,7 +129,7 @@ export function useLhDropdown(props: LhDropdownProps, emit: LhDropdownEmits) {
    * Esc 关闭（焦点在触发器上时菜单自身的 keydown 收不到，补一层文档监听）
    */
   function onDocumentKeydown(event: KeyboardEvent) {
-    if (event.key !== 'Escape' || !isVisible.value || isControlled.value) return
+    if (!isEscapeKey(event) || !isVisible.value || isControlled.value) return
     hide()
     returnFocus()
   }
@@ -159,37 +162,37 @@ export function useLhDropdown(props: LhDropdownProps, emit: LhDropdownEmits) {
     const current = enabled.findIndex((item) => item.el === document.activeElement)
 
     switch (event.key) {
-      case 'ArrowDown': {
+      case LH_KEYS.ArrowDown: {
         event.preventDefault()
         const next = current === -1 ? 0 : (current + 1) % enabled.length
         focusItem(enabled[next])
         break
       }
-      case 'ArrowUp': {
+      case LH_KEYS.ArrowUp: {
         event.preventDefault()
         const prev =
           current === -1 ? enabled.length - 1 : (current - 1 + enabled.length) % enabled.length
         focusItem(enabled[prev])
         break
       }
-      case 'Home': {
+      case LH_KEYS.Home: {
         event.preventDefault()
         focusItem(enabled[0])
         break
       }
-      case 'End': {
+      case LH_KEYS.End: {
         event.preventDefault()
         focusItem(enabled[enabled.length - 1])
         break
       }
-      case 'Enter':
-      case ' ': {
+      case LH_KEYS.Enter:
+      case LH_KEYS.Space: {
         if (current === -1) return
         event.preventDefault()
         handleItemClick(enabled[current].command)
         break
       }
-      case 'Escape': {
+      case LH_KEYS.Escape: {
         event.preventDefault()
         hide()
         returnFocus()
@@ -198,7 +201,7 @@ export function useLhDropdown(props: LhDropdownProps, emit: LhDropdownEmits) {
     }
   }
 
-  function focusItem(item: DropdownItemRecord) {
+  function focusItem(item: LhDropdownItemRecord) {
     item.el.focus()
     activeIndex.value = items.value.indexOf(item)
   }
@@ -214,10 +217,10 @@ export function useLhDropdown(props: LhDropdownProps, emit: LhDropdownEmits) {
   const context: LhDropdownContext = {
     items,
     activeIndex,
-    registerItem(item: DropdownItemRecord) {
+    registerItem(item: LhDropdownItemRecord) {
       items.value.push(item)
     },
-    unregisterItem(item: DropdownItemRecord) {
+    unregisterItem(item: LhDropdownItemRecord) {
       const index = items.value.indexOf(item)
       if (index > -1) items.value.splice(index, 1)
       if (activeIndex.value >= items.value.length) activeIndex.value = -1

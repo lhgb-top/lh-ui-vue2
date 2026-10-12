@@ -1,5 +1,5 @@
 import type { LhSpaceAlignment, LhSpaceSizeInput } from '@lh-ui/share/core/space'
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 
 export interface LhSpaceProps {
   /** 排列方向 */
@@ -11,5 +11,5 @@ export interface LhSpaceProps {
   /** 对齐方式 */
   alignment?: LhSpaceAlignment
   /** sx 快速布局属性 */
-  sx?: SxProps
+  sx?: LhSxProps
 }

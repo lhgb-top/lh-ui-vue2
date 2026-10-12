@@ -28,4 +28,21 @@ describe('locale adapter（share emitter → ref）', () => {
     expect(Object.keys(zhCN).length).toBeGreaterThan(0)
     expect(Object.keys(enUS).length).toBeGreaterThan(0)
   })
+
+  it('日期/时间组件的导航与占位文案键在六个语言包中齐备', () => {
+    setLocale('zh-CN')
+    expect(t('datepicker.prevMonth')).toBe('上一月')
+    expect(t('datepicker.nextMonth')).toBe('下一月')
+    expect(t('datepicker.placeholder')).toBe('请选择日期')
+    expect(t('timepicker.placeholder')).toBe('请选择时间')
+    expect(t('image.close')).toBe('关闭图片预览')
+    // 非中文包同样有这些键（不再回落硬编码中文）
+    setLocale('en-US')
+    expect(t('datepicker.prevMonth')).toBe('Previous month')
+    expect(t('datepicker.nextMonth')).toBe('Next month')
+    expect(t('datepicker.placeholder')).toBe('Select date')
+    expect(t('timepicker.placeholder')).toBe('Select time')
+    expect(t('image.close')).toBe('Close image preview')
+    setLocale('zh-CN')
+  })
 })

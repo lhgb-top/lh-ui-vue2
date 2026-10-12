@@ -23,4 +23,21 @@ describe('LhAffix Component', () => {
     expect(wrapper.emitted('change')).toBeUndefined()
     wrapper.destroy()
   })
+
+  it('rebinds to a scroll target assigned after mount (:target="$refs.x" 场景)', async () => {
+    const scroller = document.createElement('div')
+    document.body.appendChild(scroller)
+    const wrapper = mount(LhAffix, {
+      propsData: { offsetTop: 0 },
+      slots: { default: '固钉内容' },
+      attachTo: document.body,
+    })
+    // 挂载后容器才接入：watch 触发解绑 window + 换绑元素，不抛错且仍可滚动判定
+    await wrapper.setProps({ target: scroller })
+    scroller.dispatchEvent(new Event('scroll'))
+    await (wrapper.vm as { $nextTick: () => Promise<void> }).$nextTick()
+    expect(wrapper.find('.lh-affix-placeholder').exists()).toBe(true)
+    expect(wrapper.emitted('change')).toBeUndefined()
+    wrapper.destroy()
+  })
 })

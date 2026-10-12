@@ -1,0 +1,680 @@
+/* ==============================================================================
+   lh-ui-vue2 文档站主题层（苹果式克制动效 × 国风纸色体系）
+   VuePress 1.x 版：原 vitepress style.css 平移，DOM 选择器重定向到 v1 默认主题
+   （.navbar / .sidebar / .theme-default-content / .custom-block …），
+   --vp-c-* 变量桥接改为 --docs-* 站点变量（明暗两套）。
+   暗色机制：[data-theme='dark']（DarkToggle + config head 防闪烁脚本）。
+   动效全部尊重 prefers-reduced-motion。
+   ============================================================================== */
+
+:root {
+  --lh-primary-color: #2b4c7c;
+  --lh-primary-color-hover: #3d649e;
+  --lh-docs-paper: #faf6f0;
+  --lh-docs-ink: #2a2622;
+  --lh-docs-gold: #c4a35a;
+
+  /* 站点 UI 变量（原 --vp-c-* 桥接层）：亮色 */
+  --docs-bg: #ffffff;
+  --docs-bg-soft: #faf6f0;
+  --docs-divider: #e5e0d8;
+  --docs-text-1: #2a2622;
+  --docs-text-2: #5a5a5a;
+  --docs-text-3: #8a857c;
+  --docs-brand-soft: rgba(43, 76, 124, 0.14);
+
+  /* 苹果式缓动：快出缓收，短时长 */
+  --lh-ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --lh-ease-spring: cubic-bezier(0.34, 1.3, 0.64, 1);
+}
+
+[data-theme='dark'] {
+  --lh-primary-color: #3d649e;
+  --lh-primary-color-hover: #5a7fb5;
+  --lh-docs-paper: #262220;
+  --lh-docs-ink: #e8e2d8;
+  --lh-docs-gold: #d4b76f;
+
+  /* 站点 UI 变量：暗色 */
+  --docs-bg: #262220;
+  --docs-bg-soft: #2a2520;
+  --docs-divider: #3a352e;
+  --docs-text-1: #e8e2d8;
+  --docs-text-2: #c9c2b5;
+  --docs-text-3: #857e72;
+  --docs-brand-soft: rgba(61, 100, 158, 0.22);
+}
+
+/* ------------------------------------------------------------------------------
+   1. 全局排版：标题字阶收紧字距，正文行高放宽（苹果式阅读节奏）
+   ------------------------------------------------------------------------------ */
+.theme-default-content h1,
+.theme-default-content h2,
+.theme-default-content h3 {
+  letter-spacing: -0.02em;
+}
+
+.theme-default-content h1 {
+  font-weight: 700;
+}
+
+/* 页面主容器两侧呼吸感 */
+.page {
+  padding-bottom: 2rem;
+}
+
+/* ------------------------------------------------------------------------------
+   2. 导航：毛玻璃（backdrop blur + 饱和度）+ 发丝线 + 暗色
+   ------------------------------------------------------------------------------ */
+.navbar {
+  -webkit-backdrop-filter: saturate(180%) blur(16px);
+  backdrop-filter: saturate(180%) blur(16px);
+}
+
+.navbar .site-name {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* ------------------------------------------------------------------------------
+   3. 首页 hero：大字排版 + 渐变主标 + 入场交错渐入（LhHome.vue）
+   ------------------------------------------------------------------------------ */
+.lh-home {
+  /* v1 导航栏固定高度 3.6rem；frontmatter sidebar:false，无需侧栏偏移 */
+  padding-top: 3.6rem;
+  min-height: calc(100vh - 3.6rem);
+}
+
+.lh-home__hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4.5rem 1.5rem 3rem;
+  text-align: center;
+}
+
+.lh-home__logo {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 1.5rem;
+}
+
+.lh-home__name,
+.lh-home__text {
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+  margin: 0;
+}
+
+.lh-home__name {
+  font-size: clamp(2.4rem, 6vw, 4.2rem);
+  font-weight: 700;
+}
+
+.lh-home__text {
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  font-weight: 700;
+  /* 主标语渐变文字（主色 → 金，呼应国风） */
+  background: linear-gradient(
+    120deg,
+    var(--lh-primary-color) 0%,
+    var(--lh-primary-color-hover) 55%,
+    var(--lh-docs-gold) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.lh-home__tagline {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  color: var(--docs-text-2);
+  max-width: 640px;
+  margin: 1rem 0 0;
+}
+
+/* hero 与 actions 入场：交错渐入上浮（仅首屏一次） */
+@media (prefers-reduced-motion: no-preference) {
+  .lh-home__name,
+  .lh-home__text,
+  .lh-home__tagline,
+  .lh-home__actions,
+  .lh-home__features {
+    opacity: 0;
+    transform: translateY(24px);
+    animation: lh-hero-rise 0.9s var(--lh-ease-out-quart) forwards;
+  }
+
+  .lh-home__name {
+    animation-delay: 0.05s;
+  }
+
+  .lh-home__text {
+    animation-delay: 0.15s;
+  }
+
+  .lh-home__tagline {
+    animation-delay: 0.3s;
+  }
+
+  .lh-home__actions {
+    animation-delay: 0.45s;
+  }
+
+  .lh-home__features {
+    animation-delay: 0.6s;
+  }
+}
+
+@keyframes lh-hero-rise {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* hero 按钮：苹果式胶囊 + hover 微浮 */
+.lh-home__actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.lh-home__action {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 0.6rem 1.6rem;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid var(--docs-divider);
+  color: var(--docs-text-1);
+  background: var(--docs-bg);
+  transition:
+    transform 0.35s var(--lh-ease-spring),
+    box-shadow 0.35s var(--lh-ease-out-quart);
+}
+
+.lh-home__action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(43, 76, 124, 0.22);
+  color: var(--docs-text-1);
+}
+
+[data-theme='dark'] .lh-home__action:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+
+.lh-home__action--brand {
+  background: var(--lh-primary-color);
+  border-color: var(--lh-primary-color);
+  color: #fff;
+}
+
+.lh-home__action--brand:hover {
+  color: #fff;
+}
+
+/* ------------------------------------------------------------------------------
+   4. 首页 features 卡片：hover 浮起 + 边框过渡
+   ------------------------------------------------------------------------------ */
+.lh-home__features {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.2rem;
+  padding: 1.5rem;
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+.lh-home__feature {
+  display: block;
+  border: 1px solid var(--docs-divider);
+  border-radius: 12px;
+  padding: 1.4rem;
+  background: var(--docs-bg);
+  text-decoration: none;
+  transition:
+    transform 0.45s var(--lh-ease-out-quart),
+    border-color 0.3s ease,
+    box-shadow 0.45s var(--lh-ease-out-quart);
+}
+
+.lh-home__feature:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(43, 76, 124, 0.12);
+  text-decoration: none;
+}
+
+[data-theme='dark'] .lh-home__feature:hover {
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+.lh-home__feature-icon {
+  font-size: 1.6rem;
+  margin-bottom: 0.5rem;
+}
+
+.lh-home__feature-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--docs-text-1);
+  margin: 0 0 0.4rem;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.lh-home__feature-details {
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: var(--docs-text-2);
+  margin: 0 0 0.5rem;
+}
+
+.lh-home__feature-link {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--lh-primary-color);
+}
+
+/* 首页页脚（frontmatter footer） */
+.lh-home__footer {
+  text-align: center;
+  padding: 2rem 1.5rem 3rem;
+  border-top: 1px solid var(--docs-divider);
+}
+
+.lh-home__footer-message {
+  color: var(--docs-text-3);
+  font-size: 0.9rem;
+  margin: 0 0 0.3rem;
+}
+
+.lh-home__footer-copyright {
+  color: var(--docs-text-3);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+/* ------------------------------------------------------------------------------
+   5. v-reveal 滚动渐入系统（指令在 theme/index.ts 注册）
+      用法：<div v-reveal> 或 <div v-reveal="120">（delay 毫秒）
+   ------------------------------------------------------------------------------ */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+}
+
+.reveal--visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 0.7s var(--lh-ease-out-quart) var(--reveal-delay, 0ms),
+    transform 0.7s var(--lh-ease-out-quart) var(--reveal-delay, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+
+  .reveal--visible {
+    transition: none;
+  }
+}
+
+/* ------------------------------------------------------------------------------
+   6. 组件页微交互：侧边栏链接的 hover 平滑过渡
+   ------------------------------------------------------------------------------ */
+.sidebar-link,
+.sidebar-heading {
+  transition: color 0.2s ease;
+}
+
+.sidebar-group-items .sidebar-link {
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+/* ------------------------------------------------------------------------------
+   7. DemoBlock 展示容器（配合 DemoBlock.vue 的结构与活渲染区）
+   ------------------------------------------------------------------------------ */
+.demo-block {
+  border: 1px solid var(--docs-divider);
+  border-radius: 12px;
+  margin-block: 20px;
+  overflow: hidden;
+  background: var(--docs-bg);
+  transition: box-shadow 0.4s var(--lh-ease-out-quart), border-color 0.3s ease;
+}
+
+.demo-block:hover {
+  box-shadow: 0 6px 24px rgba(43, 76, 124, 0.08);
+}
+
+.demo-block__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background-color: var(--docs-bg-soft);
+  border-bottom: 1px solid var(--docs-divider);
+}
+
+.demo-block__title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--docs-text-1);
+  letter-spacing: 0.01em;
+}
+
+.demo-block__toggle {
+  cursor: pointer;
+  border: 1px solid var(--docs-divider);
+  border-radius: 999px;
+  background: transparent;
+  padding: 3px 12px;
+  font-size: 12px;
+  color: var(--docs-text-2);
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.demo-block__toggle:hover {
+  color: var(--lh-primary-color);
+  border-color: var(--lh-primary-color);
+}
+
+/* 活渲染区：demo 沙箱辅助类（原 dev/demo.css 的公共部分，库本身不提供） */
+.demo-block__demo {
+  padding: 16px;
+  color: var(--lh-text-primary, #2c2c2c);
+  background: var(--lh-bg-color, #faf6f0);
+}
+
+[data-theme='dark'] .demo-block__demo {
+  color: var(--lh-text-primary, #e8e2d8);
+  background: var(--lh-bg-color, #262220);
+}
+
+.demo-block__demo .demo-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.demo-block__demo .demo-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 420px;
+}
+
+.demo-block__demo .demo-note {
+  margin: 0;
+  font-size: 12px;
+  color: var(--lh-text-secondary, #8a8a8a);
+}
+
+/* anchor / affix / backtop demo 的滚动容器与段落 */
+.demo-block__demo .anchor-scroller {
+  height: 240px;
+  width: 380px;
+  overflow-y: auto;
+  border: 1px solid var(--lh-border-color, #d9d0c2);
+  border-radius: 8px;
+  padding: 0 16px;
+}
+
+.demo-block__demo .anchor-sec {
+  padding: 16px 0;
+  border-bottom: 1px dashed var(--lh-border-color, #d9d0c2);
+}
+
+.demo-block__demo .anchor-sec h3 {
+  margin: 0 0 8px;
+}
+
+.demo-block__demo .anchor-sec p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--lh-text-secondary, #8a8a8a);
+}
+
+.demo-block__demo .affix-bar {
+  padding: 8px 16px;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--lh-primary-color, #7c5c3e);
+  font-size: 13px;
+}
+
+.demo-block__missing {
+  padding: 12px 0;
+  color: var(--lh-danger-color, #b23a3a);
+  font-size: 13px;
+}
+
+/* 查看代码：grid rows 0fr→1fr 高度过渡（内容无需测高） */
+.demo-block__code-wrap {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.4s var(--lh-ease-out-quart);
+}
+
+.demo-block__code-wrap--open {
+  grid-template-rows: 1fr;
+}
+
+.demo-block__code {
+  overflow: hidden;
+  border-top: 1px solid transparent;
+  transition: border-color 0.3s ease;
+}
+
+.demo-block__code-wrap--open .demo-block__code {
+  border-top-color: var(--docs-divider);
+}
+
+.demo-block__code > div {
+  min-height: 0;
+}
+
+.demo-block__code pre {
+  margin: 0 !important;
+  border-radius: 0 !important;
+}
+
+/* ------------------------------------------------------------------------------
+   8. 代码块与 ApiStyleToggle 微调
+   ------------------------------------------------------------------------------ */
+.theme-default-content div[class*='language-'] {
+  border-radius: 10px;
+}
+
+.api-toggle-bar {
+  display: flex;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.api-toggle-bar button {
+  cursor: pointer;
+  border: 1px solid var(--docs-divider);
+  background: var(--docs-bg-soft);
+  border-radius: 999px;
+  padding: 3px 12px;
+  font-size: 12px;
+  color: var(--docs-text-2);
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.api-toggle-bar button[data-active='true'] {
+  background: var(--lh-primary-color);
+  color: #fff;
+  border-color: var(--lh-primary-color);
+}
+
+/* ------------------------------------------------------------------------------
+   9. 暗色下的默认主题铬层（导航 / 侧边栏 / 正文 / 搜索框 / 提示容器）
+   ------------------------------------------------------------------------------ */
+[data-theme='dark'] body {
+  background-color: var(--docs-bg);
+  color: var(--docs-text-1);
+}
+
+[data-theme='dark'] .navbar {
+  background-color: rgba(42, 37, 32, 0.92);
+  border-bottom-color: var(--docs-divider);
+  color: var(--docs-text-1);
+}
+
+[data-theme='dark'] .navbar .site-name,
+[data-theme='dark'] .navbar .nav-link {
+  color: var(--docs-text-1);
+}
+
+[data-theme='dark'] .navbar .nav-link:hover,
+[data-theme='dark'] .navbar .router-link-active {
+  color: var(--lh-primary-color);
+}
+
+[data-theme='dark'] .sidebar {
+  background-color: var(--docs-bg);
+  border-right-color: var(--docs-divider);
+}
+
+[data-theme='dark'] .sidebar-link,
+[data-theme='dark'] .sidebar-heading {
+  color: var(--docs-text-2);
+}
+
+[data-theme='dark'] .sidebar-link:hover,
+[data-theme='dark'] .sidebar-heading:hover {
+  color: var(--lh-primary-color);
+}
+
+[data-theme='dark'] .sidebar-link.active {
+  color: var(--lh-primary-color);
+}
+
+[data-theme='dark'] .theme-default-content {
+  color: var(--docs-text-1);
+}
+
+[data-theme='dark'] .theme-default-content h1,
+[data-theme='dark'] .theme-default-content h2,
+[data-theme='dark'] .theme-default-content h3 {
+  color: var(--docs-text-1);
+}
+
+[data-theme='dark'] .theme-default-content a {
+  color: var(--lh-primary-color);
+}
+
+[data-theme='dark'] .page-edit,
+[data-theme='dark'] .page-nav {
+  border-top-color: var(--docs-divider);
+}
+
+[data-theme='dark'] .page-nav .inner {
+  border-top-color: var(--docs-divider);
+}
+
+[data-theme='dark'] .page-nav .next,
+[data-theme='dark'] .page-nav .prev {
+  color: var(--docs-text-2);
+}
+
+/* 搜索框 */
+[data-theme='dark'] .search-box input {
+  background-color: var(--docs-bg-soft);
+  border-color: var(--docs-divider);
+  color: var(--docs-text-1);
+}
+
+[data-theme='dark'] .search-box .suggestions {
+  background-color: var(--docs-bg);
+  border-color: var(--docs-divider);
+}
+
+[data-theme='dark'] .search-box .suggestion {
+  color: var(--docs-text-2);
+}
+
+[data-theme='dark'] .search-box .suggestion.focused {
+  background-color: var(--docs-brand-soft);
+  color: var(--lh-primary-color);
+}
+
+/* ::: tip / warning / danger / details 自定义容器（v1 .custom-block） */
+[data-theme='dark'] .custom-block.tip {
+  background-color: rgba(91, 140, 90, 0.14);
+  border-color: #5b8c5a;
+  color: var(--docs-text-1);
+}
+
+[data-theme='dark'] .custom-block.warning {
+  background-color: rgba(196, 163, 90, 0.14);
+  border-color: #c4a35a;
+  color: var(--docs-text-1);
+}
+
+[data-theme='dark'] .custom-block.danger {
+  background-color: rgba(178, 58, 58, 0.16);
+  border-color: #b23a3a;
+  color: var(--docs-text-1);
+}
+
+[data-theme='dark'] .custom-block.details {
+  background-color: var(--docs-bg-soft);
+  color: var(--docs-text-1);
+}
+
+[data-theme='dark'] .custom-block.details summary {
+  color: var(--docs-text-1);
+}
+
+/* lastUpdated / 页脚编辑链接 */
+[data-theme='dark'] .page-edit .edit-link a,
+[data-theme='dark'] .last-updated .prefix {
+  color: var(--docs-text-3);
+}
+
+[data-theme='dark'] .last-updated .time {
+  color: var(--docs-text-2);
+}
+
+/* ------------------------------------------------------------------------------
+   color-mix() 字面块
+   Stylus 0.54（VuePress 1.x 内置）的解析器不认 color-mix()（CSS 2023+ 函数），
+   会把 `in` 当运算符报 "illegal unary in"。这些声明本身是现代浏览器原生支持的
+   合法 CSS，用 @css 字面块跳过 Stylus 编译、原样输出。
+   --------------------------------------------------------------------------- */
+@css {
+  .navbar {
+    background-color: color-mix(in srgb, var(--docs-bg) 78%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--docs-divider) 60%, transparent);
+  }
+
+  .lh-home__feature:hover {
+    border-color: color-mix(in srgb, var(--lh-primary-color) 45%, var(--docs-divider));
+  }
+
+  .demo-block:hover {
+    border-color: color-mix(in srgb, var(--lh-primary-color) 35%, var(--docs-divider));
+  }
+}

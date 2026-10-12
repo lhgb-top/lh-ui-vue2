@@ -6,6 +6,7 @@ import {
 } from '@lh-ui/share/core/segmented'
 import type { LhSegmentedNormalized } from '@lh-ui/share/core/segmented'
 import { sxToStyle } from '@lh-ui/share/core/shared/sx'
+import { LH_KEYS } from '@lh-ui/share/core/shared/keyboard'
 import type { LhSegmentedProps } from './types'
 
 export interface LhSegmentedEmits {
@@ -24,6 +25,9 @@ export function useLhSegmented(props: LhSegmentedProps, emit: LhSegmentedEmits) 
 
   /** roving tabindex：选中项（无选中时第一个启用项）持有焦点位 */
   const checkedIndex = computed(() => {
+    // 未传 modelValue 时不能匹配 value 为 undefined 的选项（=== 对 undefined 双侧恒真，
+    // 会让无 value 的选项在未选时误占选中态与焦点位）
+    if (value.value === undefined) return -1
     const index = normalized.value.findIndex((option) => option.value === value.value)
     return index === -1 ? -1 : index
   })
@@ -47,10 +51,10 @@ export function useLhSegmented(props: LhSegmentedProps, emit: LhSegmentedEmits) 
   function handleKeydown(event: KeyboardEvent): void {
     if (props.disabled) return
     const directions: Record<string, 1 | -1> = {
-      ArrowRight: 1,
-      ArrowDown: 1,
-      ArrowLeft: -1,
-      ArrowUp: -1,
+      [LH_KEYS.ArrowRight]: 1,
+      [LH_KEYS.ArrowDown]: 1,
+      [LH_KEYS.ArrowLeft]: -1,
+      [LH_KEYS.ArrowUp]: -1,
     }
     const direction = directions[event.key]
     if (!direction) return

@@ -25,18 +25,38 @@
       />
       <div
         class="lh-slider__button-wrapper"
+        role="slider"
+        :tabindex="props.disabled ? -1 : 0"
+        aria-orientation="horizontal"
+        :aria-label="thumbAriaLabel(0)"
+        :aria-valuenow="thumbValue(0)"
+        :aria-valuemin="props.min"
+        :aria-valuemax="props.max"
+        :aria-valuetext="`${thumbValue(0)}`"
+        :aria-disabled="props.disabled ? 'true' : 'false'"
         :style="button1Style"
         @mousedown="onDragStart($event, 0)"
         @touchstart.prevent="onDragStart($event, 0)"
+        @keydown="onButtonKeydown($event, 0)"
       >
         <div class="lh-slider__button" />
       </div>
       <div
         v-if="range"
         class="lh-slider__button-wrapper"
+        role="slider"
+        :tabindex="props.disabled ? -1 : 0"
+        aria-orientation="horizontal"
+        :aria-label="thumbAriaLabel(1)"
+        :aria-valuenow="thumbValue(1)"
+        :aria-valuemin="props.min"
+        :aria-valuemax="props.max"
+        :aria-valuetext="`${thumbValue(1)}`"
+        :aria-disabled="props.disabled ? 'true' : 'false'"
         :style="button2Style"
         @mousedown="onDragStart($event, 1)"
         @touchstart.prevent="onDragStart($event, 1)"
+        @keydown="onButtonKeydown($event, 1)"
       >
         <div class="lh-slider__button" />
       </div>
@@ -98,5 +118,8 @@ const {
   button2Style,
   getMarkPosition,
   onDragStart,
+  thumbAriaLabel,
+  thumbValue,
+  onButtonKeydown,
 } = useLhSlider(props, emit)
 </script>

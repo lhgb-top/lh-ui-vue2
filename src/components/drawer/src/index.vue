@@ -78,6 +78,7 @@ import type { PropType } from 'vue'
 import { useLhDrawer } from './index'
 import LhIcon from '../../icon'
 import type { LhDrawerProps, LhDrawerDirection } from './types'
+import { isValidElementOrSelector } from '../../../utils/element-prop'
 
 /**
  * 2.7 type-only defineProps 不支持跨文件 interface：运行时声明 + PropType（AGENTS.md 红线 #2）
@@ -90,9 +91,9 @@ const props = defineProps({
   maskClosable: { type: Boolean, default: true },
   showClose: { type: Boolean, default: true },
   teleportTarget: {
-    type: [String, Object] as PropType<LhDrawerProps['teleportTarget']>,
+    validator: isValidElementOrSelector,
     default: 'body',
-  },
+  } as PropType<LhDrawerProps['teleportTarget']>,
   lockScroll: { type: Boolean, default: true },
   closeOnEsc: { type: Boolean, default: true },
   themeVars: { type: Object as PropType<Record<string, string>>, default: undefined },

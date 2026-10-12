@@ -1,4 +1,4 @@
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 import type { LhImageFit } from '@lh-ui/share/core/image'
 
 export interface LhImageProps {
@@ -15,7 +15,7 @@ export interface LhImageProps {
   /** 原生懒加载（loading="lazy"） */
   lazy?: boolean
   /** sx 快速布局属性 */
-  sx?: SxProps
+  sx?: LhSxProps
 }
 
 /** 预览器 props（LhImageViewer 独立导出） */
@@ -25,5 +25,5 @@ export interface LhImageViewerProps {
   /** 初始下标 */
   initialIndex?: number
   /** sx 快速布局属性（作用于预览图） */
-  sx?: SxProps
+  sx?: LhSxProps
 }

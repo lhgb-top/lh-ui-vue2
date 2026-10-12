@@ -17,7 +17,7 @@
             :style="mergedDialogContentStyle"
             role="dialog"
             aria-modal="true"
-            :aria-label="props.title || 'dialog'"
+            :aria-label="props.title || t('dialog.ariaLabel', '对话框')"
           >
             <!-- Header -->
             <div
@@ -31,7 +31,7 @@
               <button
                 v-if="props.showClose !== false"
                 class="lh-dialog__close"
-                aria-label="close"
+                :aria-label="t('dialog.close', '关闭')"
                 @click="close"
               >
                 <svg viewBox="0 0 24 24" width="16" height="16">
@@ -69,6 +69,7 @@ import { computed } from 'vue'
 import type { PropType } from 'vue'
 import { useLhDialog } from './index'
 import type { LhDialogProps } from './types'
+import { t } from '../../../locale'
 
 const props = defineProps({
   modelValue: { type: Boolean, default: false },

@@ -18,6 +18,10 @@ import { fileURLToPath } from 'node:url'
 import * as sass from 'sass'
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)))
+// 刻意走 node_modules 解析（不读兄弟仓源码路径）：构建链统一由 node_modules 消费 share 的
+// 发布态产物，与 plus 同构。家族布局下要让本地构建反映兄弟仓的未发版改动，跑
+// `pnpm build:local`（scripts/link-local-share.mjs）把 node_modules/@lh-ui/share 改挂到
+// 兄弟仓已构建产物——本脚本随之读到兄弟仓的 styles/，无需改这里。
 const shareRoot = resolve(root, 'node_modules/@lh-ui/share')
 const componentsDir = join(root, 'src/components')
 

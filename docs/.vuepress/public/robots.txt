@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://www.lhgb.top/lhui/vue2/sitemap.xml

@@ -1,4 +1,4 @@
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 
 export interface LhStatisticProps {
   /** 数值标题（展示在数值上方） */
@@ -14,5 +14,5 @@ export interface LhStatisticProps {
   /** 数值后缀，如单位 */
   suffix?: string
   /** sx 快速布局属性 */
-  sx?: SxProps
+  sx?: LhSxProps
 }

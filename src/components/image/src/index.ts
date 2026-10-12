@@ -8,6 +8,8 @@ import {
   stepZoom,
 } from '@lh-ui/share/core/image'
 import { sxToStyle } from '@lh-ui/share/core/shared/sx'
+import { isActivationKey, LH_KEYS } from '@lh-ui/share/core/shared/keyboard'
+import { t } from '../../../locale'
 import { useLhFocusTrap } from '../../../composables/overlay'
 import type { LhImageProps, LhImageViewerProps } from './types'
 
@@ -44,6 +46,18 @@ export function useLhImage(props: LhImageProps, emit: LhImageEmits) {
     if (props.preview) viewerVisible.value = true
   }
 
+  /**
+   * 预览入口的键盘语义：img 本身不可聚焦，preview 开启时承担 button 语义
+   * （role/tabindex/aria-label 在模板侧按 preview 条件渲染），Enter/Space 等效点击
+   */
+  function onImageKeydown(event: KeyboardEvent): void {
+    if (!props.preview || !isActivationKey(event)) return
+    event.preventDefault()
+    openViewer()
+  }
+
+  const previewLabel = computed(() => t('image.preview', '预览图片'))
+
   const imageClasses = computed(() =>
     getImageClassNames({
       fit: props.fit ?? 'cover',
@@ -55,7 +69,18 @@ export function useLhImage(props: LhImageProps, emit: LhImageEmits) {
 
   const imageStyle = computed(() => sxToStyle(props.sx ?? {}))
 
-  return { error, viewerVisible, previewList, handleLoad, handleError, openViewer, imageClasses, imageStyle }
+  return {
+    error,
+    viewerVisible,
+    previewList,
+    previewLabel,
+    handleLoad,
+    handleError,
+    openViewer,
+    onImageKeydown,
+    imageClasses,
+    imageStyle,
+  }
 }
 
 /**
@@ -113,9 +138,9 @@ export function useLhImageViewer(props: LhImageViewerProps, emit: LhImageViewerE
 
   function handleKeydown(event: KeyboardEvent): void {
     const actions: Record<string, () => void> = {
-      Escape: () => emit('close'),
-      ArrowRight: () => go(1),
-      ArrowLeft: () => go(-1),
+      [LH_KEYS.Escape]: () => emit('close'),
+      [LH_KEYS.ArrowRight]: () => go(1),
+      [LH_KEYS.ArrowLeft]: () => go(-1),
     }
     const action = actions[event.key]
     if (action) {

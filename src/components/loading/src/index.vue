@@ -28,7 +28,7 @@ import { computed } from 'vue'
 import type { PropType } from 'vue'
 import { getLoadingClassNames } from '@lh-ui/share/core/loading'
 import { sxToStyle } from '@lh-ui/share/core/shared/sx'
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 import { t } from '../../../locale'
 import LhSpinner from '../../spinner'
 
@@ -41,7 +41,7 @@ const props = defineProps({
   background: { type: String, default: undefined },
   zIndex: { type: Number, default: undefined },
   spinner: { type: Boolean, default: true },
-  sx: { type: [Object, Array, String] as PropType<SxProps>, default: undefined },
+  sx: { type: [Object, Array, String] as PropType<LhSxProps>, default: undefined },
 })
 
 const loadingClasses = computed(() =>

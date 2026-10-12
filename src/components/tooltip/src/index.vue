@@ -49,10 +49,12 @@ import type {
   LhTooltipEffect,
   LhTooltipType,
 } from './types'
+import { isValidElementOrSelector } from '../../../utils/element-prop'
 
 const props = defineProps({
   content: { type: String, default: '' },
   placement: { type: String as PropType<LhTooltipPlacement>, default: 'top' },
+  flip: { type: Boolean, default: true },
   trigger: { type: String as PropType<LhTooltipTrigger>, default: 'hover' },
   disabled: { type: Boolean, default: false },
   manual: { type: Boolean, default: false },
@@ -66,9 +68,9 @@ const props = defineProps({
   bgColor: { type: String, default: undefined },
   maxWidth: { type: [String, Number] as PropType<string | number>, default: '200px' },
   teleportTarget: {
-    type: [String, Object] as PropType<string | HTMLElement>,
+    validator: isValidElementOrSelector,
     default: 'body',
-  },
+  } as PropType<string | HTMLElement>,
   themeVars: { type: Object as PropType<Record<string, string>>, default: undefined },
   bgPattern: { type: String, default: undefined },
   sx: { type: [Object, Array, String] as PropType<LhTooltipProps['sx']>, default: undefined },

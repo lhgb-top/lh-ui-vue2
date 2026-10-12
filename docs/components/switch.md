@@ -2,14 +2,33 @@
 
 开关切换。支持 active/inactive 文案、loading 与 disabled；点击与 Enter/Space 键均可切换。
 
-<DemoBlock name="switch" title="开关" :height="180">
+<DemoBlock name="switch" title="开关" :height="130">
 
+<!-- gen-demo-code:begin -->
 ```vue
 <template>
-  <LhSwitch v-model="on" active-text="夜模式" inactive-text="昼模式" />
+  <div class="demo-col" style="gap: 20px">
+    <div class="demo-row" style="gap: 24px; flex-wrap: wrap">
+      <LhSwitch v-model="on" active-text="夜模式" inactive-text="昼模式" name="theme" />
+      <LhSwitch v-model="loading" loading />
+      <LhSwitch v-model="on2" disabled />
+    </div>
+    <div class="demo-row" style="gap: 24px; flex-wrap: wrap; align-items: center">
+      <LhSwitch v-model="s" size="small" active-text="小" />
+      <LhSwitch v-model="m" size="medium" active-text="中" />
+      <LhSwitch v-model="l" size="large" active-text="大" />
+    </div>
+    <p class="demo-note">loading 态禁点且显示加载圈；name 透传到原生 input。</p>
+  </div>
 </template>
-```
 
+<script>
+export default {
+  data: () => ({ on: true, on2: false, loading: true, s: true, m: true, l: false }),
+}
+</script>
+```
+<!-- gen-demo-code:end -->
 </DemoBlock>
 
 ## Props
@@ -25,7 +44,10 @@
 
 ## Events
 
-`input`（v-model）、`change (value)`。
+| 事件 | 说明 | 回调参数 |
+| --- | --- | --- |
+| input | v-model 事件 | — |
+| change | 开关状态变化时触发 | `(value)` |
 
 ## 无障碍
 

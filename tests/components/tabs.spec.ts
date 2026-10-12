@@ -81,6 +81,39 @@ describe('LhTabs', () => {
     wrapper.destroy()
   })
 
+  it('数值型 modelValue 归一化后激活对应页签', () => {
+    // 页签名是字符串，modelValue 可能以数值传入（索引、计数器）：
+    // 旧实现 record.name === modelValue（'c' === 3）恒不匹配，回退到第一页签
+    const wrapper = mountTabs({ modelValue: 3 })
+    const tabs = wrapper.findAll('[role="tab"]')
+    expect(tabs.at(0)!.attributes('aria-selected')).toBe('true')
+    wrapper.destroy()
+  })
+
+  it('显式绑定到空串名的页签可激活', () => {
+    // resolveActiveName 旧用真值短路：name 为 '' 的页签永远无法被显式激活，
+    // 只能靠「第一个可用页签」兜底意外命中。故把具名页签放前、空串页签放后：
+    // 兜底会选中前者，显式匹配才会选中后者
+    const Host = defineComponent({
+      name: 'EmptyNameHost',
+      render(h: CreateElement) {
+        return h(
+          TabsComp,
+          { props: { modelValue: '' } },
+          [
+            h(TabPaneComp, { props: { name: 'first', label: 'First' } }, 'First content'),
+            h(TabPaneComp, { props: { name: '', label: 'Empty' } }, 'Empty content'),
+          ],
+        )
+      },
+    })
+    const wrapper = mount(Host as unknown as ComponentOptions<Vue>)
+    const tabs = wrapper.findAll('[role="tab"]')
+    expect(tabs.at(1)!.attributes('aria-selected')).toBe('true')
+    expect(tabs.at(0)!.attributes('aria-selected')).toBe('false')
+    wrapper.destroy()
+  })
+
   it('uses roving tabindex across enabled tabs', () => {
     const wrapper = mountTabs()
     const tabs = wrapper.findAll('[role="tab"]')

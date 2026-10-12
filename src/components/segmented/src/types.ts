@@ -1,4 +1,4 @@
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 import type { LhSegmentedInput, LhSegmentedValue } from '@lh-ui/share/core/segmented'
 
 export interface LhSegmentedProps {
@@ -10,7 +10,7 @@ export interface LhSegmentedProps {
   /** 撑满容器 */
   block?: boolean
   /** sx 快速布局属性 */
-  sx?: SxProps
+  sx?: LhSxProps
 }
 
 export type { LhSegmentedInput, LhSegmentedValue }

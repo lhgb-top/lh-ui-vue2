@@ -1,6 +1,6 @@
 import type { InjectionKey } from 'vue'
 import type { Ref } from 'vue'
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 import type { LhCollapseKey } from '@lh-ui/share/core/collapse'
 
 /** 父级向 Item 下发的上下文 */
@@ -20,7 +20,7 @@ export interface LhCollapseProps {
   /** 手风琴模式：同时只展开一个 */
   accordion?: boolean
   /** sx 快速布局属性 */
-  sx?: SxProps
+  sx?: LhSxProps
 }
 
 /** 面板项 props */
@@ -31,5 +31,5 @@ export interface LhCollapseItemProps {
   title?: string
   disabled?: boolean
   /** sx 快速布局属性 */
-  sx?: SxProps
+  sx?: LhSxProps
 }

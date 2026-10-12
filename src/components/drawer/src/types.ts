@@ -1,5 +1,5 @@
 import type { LhDrawerDirection } from '@lh-ui/share/core/drawer'
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 
 export type { LhDrawerDirection }
 
@@ -30,5 +30,5 @@ export interface LhDrawerProps {
   /** 组件级背景花纹，覆盖 ConfigProvider 配置 */
   bgPattern?: string
   /** sx 快速布局属性（作用于面板） */
-  sx?: SxProps
+  sx?: LhSxProps
 }

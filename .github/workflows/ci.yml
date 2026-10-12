@@ -8,8 +8,6 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    # 注意：@lh-ui/share 目前以 link:../lh-ui-share 引入（发布前形态），
-    # share 正式发到 npm 后把 dependencies 改为 ^0.1.0，本 CI 才可独立运行
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4

@@ -46,6 +46,7 @@ import { provide } from 'vue'
 import { useLhDropdown } from './index'
 import { LH_DROPDOWN_KEY } from './types'
 import type { LhDropdownProps, LhDropdownPlacement, LhDropdownTrigger } from './types'
+import { isValidElementOrSelector } from '../../../utils/element-prop'
 
 /**
  * 2.7 type-only defineProps 不支持跨文件 interface：运行时声明 + PropType（AGENTS.md 红线 #2）
@@ -53,13 +54,14 @@ import type { LhDropdownProps, LhDropdownPlacement, LhDropdownTrigger } from './
 const props = defineProps({
   trigger: { type: String as PropType<LhDropdownTrigger>, default: 'click' },
   placement: { type: String as PropType<LhDropdownPlacement>, default: 'bottom-start' },
+  flip: { type: Boolean, default: true },
   visible: { type: Boolean, default: undefined },
   disabled: { type: Boolean, default: false },
   hideOnClick: { type: Boolean, default: true },
   teleportTarget: {
-    type: [String, Object] as PropType<LhDropdownProps['teleportTarget']>,
+    validator: isValidElementOrSelector,
     default: 'body',
-  },
+  } as PropType<LhDropdownProps['teleportTarget']>,
   popperClass: { type: String, default: undefined },
   maxHeight: { type: [String, Number] as PropType<LhDropdownProps['maxHeight']>, default: undefined },
   themeVars: { type: Object as PropType<Record<string, string>>, default: undefined },

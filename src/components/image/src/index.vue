@@ -11,9 +11,13 @@
       :class="`lh-image__inner--${props.fit ?? 'cover'}`"
       :loading="props.lazy ? 'lazy' : undefined"
       decoding="async"
+      :role="props.preview ? 'button' : undefined"
+      :tabindex="props.preview ? 0 : undefined"
+      :aria-label="props.preview ? previewLabel : undefined"
       @load="handleLoad"
       @error="handleError"
       @click="openViewer"
+      @keydown="onImageKeydown"
     />
     <span
       v-else
@@ -63,9 +67,11 @@ const {
   error,
   viewerVisible,
   previewList,
+  previewLabel,
   handleLoad,
   handleError,
   openViewer,
+  onImageKeydown,
   imageClasses,
   imageStyle,
 } = useLhImage(props, emit)

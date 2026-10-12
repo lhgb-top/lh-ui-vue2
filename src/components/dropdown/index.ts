@@ -7,7 +7,7 @@ export type {
   LhDropdownProps,
   LhDropdownItemProps,
   LhDropdownContext,
-  DropdownItemRecord,
+  LhDropdownItemRecord,
   LhDropdownPlacement,
   LhDropdownTrigger,
 } from './src/types'

@@ -1,5 +1,5 @@
 import type { InjectionKey, Ref } from 'vue'
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 import type { LhTimelineMode } from '@lh-ui/share/core/timeline'
 
 /** 父级向 Item 下发的上下文 */
@@ -21,7 +21,7 @@ export interface LhTimelineItemProps {
   type?: 'primary' | 'success' | 'warning' | 'danger'
   hollow?: boolean
   /** sx 快速布局属性 */
-  sx?: SxProps
+  sx?: LhSxProps
 }
 
 /** 时间线 props */
@@ -29,5 +29,5 @@ export interface LhTimelineProps {
   /** 布局模式（alternate 左右交替） */
   mode?: LhTimelineMode
   /** sx 快速布局属性 */
-  sx?: SxProps
+  sx?: LhSxProps
 }

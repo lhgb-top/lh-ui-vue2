@@ -61,16 +61,23 @@ describe('LhBreadcrumb', () => {
   it('collapses middle items beyond maxItems with an expandable ellipsis', async () => {
     const wrapper = mountBreadcrumb([{}, {}, {}, {}, {}], { maxItems: 3 })
     await nextTick()
-    // 首项 + 末尾 2 项可见，中间 2 项隐藏
-    expect(wrapper.findAll('.lh-breadcrumb__item')).toHaveLength(3)
+    // 首项 + 末尾 2 项可见，中间 2 项折叠；隐藏项用 v-show 保留挂载（uid 重排依赖）
+    // findAll 的元素类型是 Element（VTU 1.x 的 findAll 无元素泛型，仅 find 有），取 style 需断言 HTMLElement
+    const items = wrapper.findAll('.lh-breadcrumb__item')
+    const visible = items.filter((item) => !(item.element as HTMLElement).style.display.includes('none'))
+    expect(visible).toHaveLength(3)
     const ellipsis = wrapper.find('.lh-breadcrumb__ellipsis-btn')
     expect(ellipsis.exists()).toBe(true)
     expect(ellipsis.attributes('aria-label')).toBe('更多')
 
     await ellipsis.trigger('click')
     await nextTick()
-    expect(wrapper.findAll('.lh-breadcrumb__item')).toHaveLength(5)
-    expect(wrapper.find('.lh-breadcrumb__ellipsis-btn').exists()).toBe(false)
+    const expandedItems = wrapper.findAll('.lh-breadcrumb__item')
+    expect(
+      expandedItems.filter((item) => !(item.element as HTMLElement).style.display.includes('none')).length,
+    ).toBe(expandedItems.length)
+    // 省略号同样走 v-show（绑在 .lh-breadcrumb__ellipsis 上），展开后仅隐藏而非移出 DOM
+    expect(wrapper.find<HTMLElement>('.lh-breadcrumb__ellipsis').element.style.display).toContain('none')
     wrapper.destroy()
   })
 

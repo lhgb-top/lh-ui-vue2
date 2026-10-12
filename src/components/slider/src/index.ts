@@ -1,4 +1,4 @@
-import { computed, inject, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, inject, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import {
   clampValue,
   snapToStep,
@@ -7,6 +7,8 @@ import {
   buildMarksList,
 } from '@lh-ui/share/core/slider'
 import { sxToStyle } from '@lh-ui/share/core/shared/sx'
+import { getNextRangeValue } from '@lh-ui/share/core/shared/keyboard'
+import { t } from '../../../locale'
 import { LH_FORM_ITEM_CONTEXT_KEY } from '../../form/src/types'
 import type { LhSliderProps } from './types'
 
@@ -49,6 +51,16 @@ export function useLhSlider(props: LhSliderProps, emit: LhSliderEmits) {
     }
   })
 
+  // 受控回显：外部更新 modelValue（表单 reset / 程序赋值）后滑块必须跟随；
+  // 拖拽中跳过，避免父级回流的值打断正在进行的拖拽
+  watch(
+    () => props.modelValue,
+    (val) => {
+      if (val === null || val === undefined || dragging.value) return
+      localValue.value = Array.isArray(val) ? [...val] : val
+    },
+  )
+
   const marksList = computed(() => buildMarksList(props.marks))
 
   // 元组视图：number | [number, number] 的联合无法直接下标访问，统一转成二元组
@@ -84,12 +96,18 @@ export function useLhSlider(props: LhSliderProps, emit: LhSliderEmits) {
   }
 
   const barStyle = computed(() => {
-    const left = getPositionFromValue(Math.min(arr.value[0], arr.value[1]), props.min ?? 0, props.max ?? 100) * 100
-    const right =
-      100 - getPositionFromValue(Math.max(arr.value[0], arr.value[1]), props.min ?? 0, props.max ?? 100) * 100
+    const min = props.min ?? 0
+    const max = props.max ?? 100
+    // 单值模式：bar 从轨道起点铺到当前值（[v, v] 双端相等的旧公式会把宽度算成 0）
+    if (!props.range) {
+      const width = getPositionFromValue(arr.value[0], min, max) * 100
+      return { left: '0%', width: `${width}%` }
+    }
+    const left = getPositionFromValue(Math.min(arr.value[0], arr.value[1]), min, max) * 100
+    const right = 100 - getPositionFromValue(Math.max(arr.value[0], arr.value[1]), min, max) * 100
     return {
-      left: left + '%',
-      width: 100 - left - right + '%',
+      left: `${left}%`,
+      width: `${100 - left - right}%`,
     }
   })
 
@@ -113,6 +131,71 @@ export function useLhSlider(props: LhSliderProps, emit: LhSliderEmits) {
     emit('change', val)
   }
 
+  /** thumb 的可达名称：range 模式区分起始/结束两端 */
+  function thumbAriaLabel(index: number): string {
+    if (props.range) {
+      return index === 0
+        ? t('slider.thumbStart', '起始滑块')
+        : t('slider.thumbEnd', '结束滑块')
+    }
+    return t('slider.thumb', '滑块')
+  }
+
+  /** thumb 的当前数值（aria-valuenow） */
+  function thumbValue(index: number): number {
+    return arr.value[index]
+  }
+
+  /**
+   * thumb 的键盘导航（WAI-ARIA slider 模式）
+   *
+   * 方向键按 step 增减、PageUp/Down 大步进、Home/End 直达极值。
+   * range 模式下键盘**不交换两端**（与拖拽的交换语义不同），而是把本端
+   * 钳在其活动范围内，保证「焦点所在的 thumb」与「被修改的值」始终一致——
+   * 键盘用户连续按键时不会出现焦点与值错位。
+   */
+  function onButtonKeydown(event: KeyboardEvent, index: number): void {
+    if (props.disabled) return
+
+    const min = props.min ?? 0
+    const max = props.max ?? 100
+    const step = props.step ?? 1
+    const current = arr.value[index]
+
+    const next = getNextRangeValue(current, event.key, { min, max, step })
+    // 非导航键（Tab 等）原样返回，不拦截默认行为
+    if (next === current) return
+
+    event.preventDefault()
+
+    const pair: [number, number] = [arr.value[0], arr.value[1]]
+    if (props.range) {
+      // range：钳在本端活动范围内，不越过另一端
+      pair[index] = index === 0 ? clampValue(next, min, pair[1]) : clampValue(next, pair[0], max)
+    } else {
+      pair[index] = next
+    }
+    localValue.value = pair
+    emitValue()
+  }
+
+  // 拖拽监听句柄：成对记录，组件在拖拽中被卸载时由 onBeforeUnmount 兜底移除
+  let dragMoveHandler: ((ev: MouseEvent | TouchEvent) => void) | null = null
+  let dragUpHandler: (() => void) | null = null
+
+  function detachDragListeners(): void {
+    if (dragMoveHandler) {
+      document.removeEventListener('mousemove', dragMoveHandler)
+      document.removeEventListener('touchmove', dragMoveHandler)
+      dragMoveHandler = null
+    }
+    if (dragUpHandler) {
+      document.removeEventListener('mouseup', dragUpHandler)
+      document.removeEventListener('touchend', dragUpHandler)
+      dragUpHandler = null
+    }
+  }
+
   function onDragStart(e: MouseEvent | TouchEvent, index: number): void {
     if (props.disabled) return
     dragging.value = true
@@ -122,11 +205,10 @@ export function useLhSlider(props: LhSliderProps, emit: LhSliderEmits) {
     const upHandler = () => {
       dragging.value = false
       emitValue()
-      document.removeEventListener('mousemove', moveHandler)
-      document.removeEventListener('mouseup', upHandler)
-      document.removeEventListener('touchmove', moveHandler)
-      document.removeEventListener('touchend', upHandler)
+      detachDragListeners()
     }
+    dragMoveHandler = moveHandler
+    dragUpHandler = upHandler
     document.addEventListener('mousemove', moveHandler)
     document.addEventListener('mouseup', upHandler)
     document.addEventListener('touchmove', moveHandler)
@@ -175,6 +257,7 @@ export function useLhSlider(props: LhSliderProps, emit: LhSliderEmits) {
 
   onBeforeUnmount(() => {
     dragging.value = false
+    detachDragListeners()
   })
 
   return {
@@ -189,5 +272,8 @@ export function useLhSlider(props: LhSliderProps, emit: LhSliderEmits) {
     button2Style,
     getMarkPosition,
     onDragStart,
+    thumbAriaLabel,
+    thumbValue,
+    onButtonKeydown,
   }
 }

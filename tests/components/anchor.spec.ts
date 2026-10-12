@@ -49,4 +49,36 @@ describe('LhAnchor Component', () => {
     a.remove()
     b.remove()
   })
+
+  it('rebinds scroll listening when target arrives after mount (:target="$refs.x" 场景)', async () => {
+    const a = document.createElement('div')
+    a.id = 'a'
+    const b = document.createElement('div')
+    b.id = 'b'
+    const scroller = document.createElement('div')
+    document.body.append(scroller, a, b)
+
+    // jsdom 无真实布局：用 stub 的 rect.top 模拟容器滚动时段落位置的变化
+    const setRects = (topA: number, topB: number): void => {
+      a.getBoundingClientRect = () => ({ top: topA } as DOMRect)
+      b.getBoundingClientRect = () => ({ top: topB } as DOMRect)
+    }
+    setRects(50, 100)
+
+    const wrapper = mount(LhAnchor, { propsData: { items, offset: 0 }, attachTo: document.body })
+    // 挂载时 target 缺省（回退 window）；父级 mounted 后才把容器塞进来
+    await wrapper.setProps({ target: scroller })
+    expect(wrapper.find('.lh-anchor__link--active').text()).toBe('甲')
+
+    // 模拟容器向下滚动：两段都划过阈值线，active 联动到最后一段（乙）
+    setRects(-50, -10)
+    scroller.dispatchEvent(new Event('scroll'))
+    await wrapper.vm.$nextTick()
+    expect(wrapper.find('.lh-anchor__link--active').text()).toBe('乙')
+
+    wrapper.destroy()
+    scroller.remove()
+    a.remove()
+    b.remove()
+  })
 })

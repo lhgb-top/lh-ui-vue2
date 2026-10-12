@@ -1,4 +1,4 @@
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import {
   LH_BACKTOP_SCROLLEND_DELAY,
   backToTop,
@@ -44,7 +44,7 @@ function useLhScrollEnd(
     }
   }
 
-  onMounted(() => {
+  function attach(): void {
     const target = getTarget()
     if (!target) return
     if (supportsScrollEnd(target)) {
@@ -52,18 +52,22 @@ function useLhScrollEnd(
     } else {
       target.addEventListener('scroll', debounced, { passive: true })
     }
-  })
+  }
 
-  onBeforeUnmount(() => {
+  function detach(): void {
     const target = getTarget()
     if (target) {
       if (supportsScrollEnd(target)) target.removeEventListener('scrollend', handler)
       else target.removeEventListener('scroll', debounced)
     }
     clear()
-  })
+  }
 
-  return { clear }
+  onMounted(attach)
+
+  onBeforeUnmount(detach)
+
+  return { attach, detach, clear }
 }
 
 /**
@@ -90,24 +94,44 @@ export function useLhBackTop(props: LhBackTopProps, emit: LhBackTopEmits) {
   }
 
   // 滚动停止事件：原生 scrollend 优先，旧浏览器退回 scroll + 防抖
-  useLhScrollEnd(() => scrollTarget, handleScrollEnd)
+  const scrollEnd = useLhScrollEnd(() => scrollTarget, handleScrollEnd)
 
   function handleClick(event: MouseEvent): void {
     emit('click', event)
     if (scrollTarget) backToTop(scrollTarget, props.smooth !== false)
   }
 
-  onMounted(() => {
-    const listenerTarget: HTMLElement | Window | null = scrollTarget
-    if (!listenerTarget) return
-    listenerTarget.addEventListener('scroll', handleScroll, { passive: true })
+  function attachScroll(): void {
+    if (!scrollTarget) return
+    scrollTarget.addEventListener('scroll', handleScroll, { passive: true })
     handleScroll()
-  })
+  }
+
+  function detachScroll(): void {
+    scrollTarget?.removeEventListener('scroll', handleScroll)
+  }
+
+  onMounted(attachScroll)
 
   onBeforeUnmount(() => {
-    const listenerTarget: HTMLElement | Window | null = scrollTarget
-    listenerTarget?.removeEventListener('scroll', handleScroll)
+    detachScroll()
+    scrollEnd.detach()
   })
+
+  // target 变化（如父级 ref 在 mounted 后才赋值，:target="$refs.x" 场景）：
+  // 先按旧目标解绑，再重新解析并换绑，保证运行时切容器立即生效
+  watch(
+    () => props.target,
+    () => {
+      detachScroll()
+      scrollEnd.detach()
+      if (typeof window !== 'undefined') {
+        scrollTarget = resolveScrollTarget(props.target)
+        attachScroll()
+        scrollEnd.attach()
+      }
+    },
+  )
 
   const backTopClasses = computed(() => getBackTopClassNames({ visible: visible.value }))
 

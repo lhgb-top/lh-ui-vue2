@@ -66,5 +66,5 @@ export interface LhConfigContext {
  * ConfigProvider 注入 key
  * 注入的是 computed 引用而非快照对象，保证 provider props 变化能传导给 inject 方
  */
-export const CONFIG_PROVIDER_KEY: InjectionKey<ComputedRef<LhConfigContext>> =
+export const LH_CONFIG_PROVIDER_KEY: InjectionKey<ComputedRef<LhConfigContext>> =
   Symbol('LhConfigProviderKey')

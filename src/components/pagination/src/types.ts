@@ -1,4 +1,4 @@
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 
 export interface LhPaginationProps {
   /** 数据总数（必填） */
@@ -20,5 +20,5 @@ export interface LhPaginationProps {
   /** 是否禁用 */
   disabled?: boolean
   /** sx 快速布局属性 */
-  sx?: SxProps
+  sx?: LhSxProps
 }

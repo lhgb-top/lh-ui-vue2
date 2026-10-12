@@ -37,6 +37,15 @@ import LhTimeline, { LhTimelineItem } from './components/timeline'
 import LhCollapse, { LhCollapseItem } from './components/collapse'
 import LhBreadcrumb, { LhBreadcrumbItem } from './components/breadcrumb'
 import LhPagination from './components/pagination'
+import LhCalendar from './components/calendar'
+import LhDatePicker from './components/date-picker'
+import LhTimePicker from './components/time-picker'
+import LhCascader from './components/cascader'
+import LhTree from './components/tree'
+import LhTreeSelect from './components/tree-select'
+import LhTable from './components/table'
+import LhTransfer from './components/transfer'
+import LhUpload from './components/upload'
 import LhTabs, { LhTabPane } from './components/tabs'
 import LhSteps, { LhStep } from './components/steps'
 import LhInputNumber from './components/input-number'
@@ -101,6 +110,15 @@ export const lhComponents: LhRegistryEntry[] = [
   LhBreadcrumb,
   LhBreadcrumbItem,
   LhPagination,
+  LhCalendar,
+  LhDatePicker,
+  LhTimePicker,
+  LhCascader,
+  LhTree,
+  LhTreeSelect,
+  LhTable,
+  LhTransfer,
+  LhUpload,
   LhTabs,
   LhTabPane,
   LhSteps,
@@ -149,7 +167,11 @@ const install = (Vue: VueConstructor): void => {
 export default { install }
 
 export { LhConfigProvider }
-export { useLhConfigProvider, useLhConfigContext, CONFIG_PROVIDER_KEY } from './components/config-provider'
+export {
+  useLhConfigProvider,
+  useLhConfigContext,
+  LH_CONFIG_PROVIDER_KEY,
+} from './components/config-provider'
 export type {
   LhConfigContext,
   LhConfigProviderProps,
@@ -192,6 +214,15 @@ export {
   LhBreadcrumb,
   LhBreadcrumbItem,
   LhPagination,
+  LhCalendar,
+  LhDatePicker,
+  LhTimePicker,
+  LhCascader,
+  LhTree,
+  LhTreeSelect,
+  LhTable,
+  LhTransfer,
+  LhUpload,
   LhTabs,
   LhTabPane,
   LhSteps,

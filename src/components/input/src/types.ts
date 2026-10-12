@@ -1,4 +1,4 @@
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 import type { LhComponentSize } from '@lh-ui/share/core/shared'
 
 /**
@@ -60,7 +60,9 @@ export interface LhInputProps {
   minlength?: number
   showWordLimit?: boolean
   clearable?: boolean
+  /** 前缀图标，取内置 LhIcon 图标名（如 search、date） */
   prefixIcon?: string
+  /** 后缀图标，取内置 LhIcon 图标名（如 close、date） */
   suffixIcon?: string
   autofocus?: boolean
   autocomplete?: string
@@ -78,5 +80,5 @@ export interface LhInputProps {
   /** 组件级背景花纹，覆盖 ConfigProvider 配置 */
   bgPattern?: string
   /** sx 快速布局属性 */
-  sx?: SxProps
+  sx?: LhSxProps
 }

@@ -1,5 +1,5 @@
 import type { LhCardShadow } from '@lh-ui/share/core/card'
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 
 export interface LhCardProps {
   /** 卡片标题（也可用 header 插槽） */
@@ -15,5 +15,5 @@ export interface LhCardProps {
   /** 花纹背景 URL（如 var(--lh-pattern-willow)），不受全局白名单限制 */
   bgPattern?: string
   /** sx 快速布局属性 */
-  sx?: SxProps
+  sx?: LhSxProps
 }

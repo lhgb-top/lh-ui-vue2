@@ -35,9 +35,9 @@ export interface UseLhPopperOptions {
   /** 视口安全边距，默认 8 */
   padding?: number
   /** 主轴溢出翻转，默认开启 */
-  flip?: boolean
+  flip?: boolean | Ref<boolean>
   /** 交叉轴溢出夹回，默认开启 */
-  shift?: boolean
+  shift?: boolean | Ref<boolean>
   /**
    * 滚动/调整窗口导致触发器完全离开视口时的回调。
    * 弹出层是 fixed 定位且跟随触发器重算位置；触发器滚出视口后，它会被
@@ -78,8 +78,8 @@ export function useLhPopper(options: UseLhPopperOptions) {
         placement: unref(options.placement),
         gap: options.gap ?? 8,
         padding: options.padding ?? 8,
-        flip: options.flip ?? true,
-        shift: options.shift ?? true,
+        flip: unref(options.flip) ?? true,
+        shift: unref(options.shift) ?? true,
       },
     )
 
@@ -127,8 +127,9 @@ export function useLhPopper(options: UseLhPopperOptions) {
     },
   )
 
+  // placement / flip / shift 任一变化都重定位（运行时改 flip 开关也要立即生效）
   watch(
-    () => unref(options.placement),
+    () => [unref(options.placement), unref(options.flip) ?? true, unref(options.shift) ?? true],
     () => {
       if (options.visible.value) nextTick(updatePosition)
     },

@@ -81,7 +81,7 @@ export function useLhPagination(props: LhPaginationProps, emit: LhPaginationEmit
   const prevLabel = computed(() => t('pagination.prev', '上一页'))
   const nextLabel = computed(() => t('pagination.next', '下一页'))
   const gotoLabel = computed(() => t('pagination.goto', '前往'))
-  const pageSuffixText = computed(() => t('pagination.pageSuffix', ''))
+  const pageSuffixText = computed(() => t('pagination.pageSuffix', '页'))
   const sizeChangerLabel = computed(() => t('pagination.sizeChangerLabel', '每页条数'))
 
   function pageLabel(page: number) {

@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@lh-ui/share':
-        specifier: link:../lh-ui-share
-        version: link:../lh-ui-share
+        specifier: ^0.3.0
+        version: 0.3.0
     devDependencies:
       '@changesets/cli':
         specifier: ^3.0.3
@@ -428,6 +428,10 @@ packages:
 
   '@keyv/serialize@1.1.1':
     resolution: {integrity: sha512-dXn3FZhPv0US+7dtJsIi2R+c7qWYiReoEh5zUntWCf4oSpMNib8FDhSoed6m3QyZdx5hK7iLFkYk3rNxwt8vTA==}
+
+  '@lh-ui/share@0.3.0':
+    resolution: {integrity: sha512-LefzG9LgIxAzq0RDH46jpOg0hrJbCs1yMn1S45iw4tzXy85jJe2Ihsg6gTQv5ZoSbO9cdpXbpJ5/NfoCyGqMPg==}
+    engines: {node: '>=20'}
 
   '@manypkg/find-root@3.1.0':
     resolution: {integrity: sha512-BcSqCyKhBVZ5YkSzOiheMCV41kqAFptW6xGqYSTjkVTl9XQpr+pqHhwgGCOHQtjDCv7Is6EFyA14Sm5GVbVABA==}
@@ -2108,6 +2112,8 @@ snapshots:
       keyv: 5.6.0
 
   '@keyv/serialize@1.1.1': {}
+
+  '@lh-ui/share@0.3.0': {}
 
   '@manypkg/find-root@3.1.0':
     dependencies:

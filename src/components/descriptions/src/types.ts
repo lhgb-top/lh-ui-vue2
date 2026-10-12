@@ -1,5 +1,5 @@
 import type { LhDescriptionsItem } from '@lh-ui/share/core/descriptions'
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 
 export interface LhDescriptionsProps {
   /** 描述列表标题 */
@@ -11,7 +11,7 @@ export interface LhDescriptionsProps {
   /** 条目列表；label/value/span 三元组 */
   items: LhDescriptionsItem[]
   /** sx 快速布局属性 */
-  sx?: SxProps
+  sx?: LhSxProps
 }
 
 export type { LhDescriptionsItem }

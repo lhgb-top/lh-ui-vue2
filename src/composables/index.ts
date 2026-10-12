@@ -8,11 +8,11 @@
  * 注意：useLhConfigContext 位于 config-provider 组件内（plus 平价），本文件通过
  * configContext 参数消费注入上下文，避免 composables 反向依赖组件目录。
  */
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, ref } from 'vue'
 import type { ComputedRef, Ref, WritableComputedRef } from 'vue'
 import { createNamespace, stripCssVarName, toCssVarName } from '@lh-ui/share/utils'
-import { THEME_PRESETS, getThemeVars } from '@lh-ui/share/theme'
-import type { ThemePresetName } from '@lh-ui/share/theme'
+import { LH_THEME_PRESETS, getThemeVars } from '@lh-ui/share/theme'
+import type { LhThemePresetName } from '@lh-ui/share/theme'
 import { LH_GRID_BREAKPOINTS, resolveBreakpoint } from '@lh-ui/share/core/grid'
 import type { LhGridBreakpoint } from '@lh-ui/share/core/grid'
 import type { LhSizes } from '@lh-ui/share/types'
@@ -98,6 +98,36 @@ export function useLhZIndex() {
   }
 
   return { zIndex, nextZIndex }
+}
+
+/**
+ * useLhOverlayStack - 弹层打开顺序栈
+ *
+ * 模块级栈记录当前打开的弹层（dialog / drawer 等）：多弹层叠加时 Esc 只关栈顶，
+ * 避免一次按键把底下所有弹层一起带走。每个实例 open 时 register、关闭时 unregister，
+ * 组件卸载时自动出栈兜底。与 useLhZIndex 的递增体系配套（plus 同构）。
+ */
+const _overlayStack: symbol[] = []
+export function useLhOverlayStack() {
+  const id = Symbol('lh-overlay')
+
+  function register() {
+    _overlayStack.push(id)
+  }
+
+  function unregister() {
+    const index = _overlayStack.lastIndexOf(id)
+    if (index >= 0) _overlayStack.splice(index, 1)
+  }
+
+  /** 本实例是否处于栈顶（只有栈顶响应 Esc） */
+  function isTopmost() {
+    return _overlayStack[_overlayStack.length - 1] === id
+  }
+
+  onBeforeUnmount(unregister)
+
+  return { register, unregister, isTopmost }
 }
 
 /**
@@ -250,13 +280,13 @@ export function useLhTheme(options?: { initialTheme?: LhThemeType; storageKey?: 
 }
 
 /**
- * usePresetTheme - 预设主题切换
+ * useLhPresetTheme - 预设主题切换
  *
  * 与 useLhTheme（明暗模式）互补：本 composable 把预设色板变量写到 :root，换的是 --lh-* 配色。
  * 返回的 themeVars 已按 ConfigProvider 约定去掉 --lh- 前缀，可传给 LhConfigProvider 局部生效。
  */
-export function usePresetTheme(options?: {
-  initialPreset?: ThemePresetName
+export function useLhPresetTheme(options?: {
+  initialPreset?: LhThemePresetName
   storageKey?: string
   /** 是否把变量写到 :root，默认 true。设为 false 只取 themeVars 自己接管应用 */
   applyToRoot?: boolean
@@ -264,21 +294,21 @@ export function usePresetTheme(options?: {
   const storageKey = options?.storageKey ?? 'lh-ui-preset'
   const applyToRoot = options?.applyToRoot ?? true
 
-  const initPreset = (): ThemePresetName => {
+  const initPreset = (): LhThemePresetName => {
     if (options?.initialPreset) return options.initialPreset
     try {
       const stored = localStorage.getItem(storageKey)
-      const matched = stored ? THEME_PRESETS.find((p) => p.name === stored) : undefined
+      const matched = stored ? LH_THEME_PRESETS.find((p) => p.name === stored) : undefined
       if (matched) return matched.name
     } catch {
       /* SSR 等环境可能无 localStorage */
     }
-    return THEME_PRESETS[0].name
+    return LH_THEME_PRESETS[0].name
   }
 
-  const preset = ref<ThemePresetName>(initPreset())
+  const preset = ref<LhThemePresetName>(initPreset())
 
-  const applyPreset = (name: ThemePresetName) => {
+  const applyPreset = (name: LhThemePresetName) => {
     const vars = getThemeVars(name)
     if (!vars) return
     // applyToRoot: false 时不写 :root 也不持久化——该模式只负责产出 themeVars，
@@ -301,7 +331,7 @@ export function usePresetTheme(options?: {
   applyPreset(preset.value)
 
   /** 设置预设主题 */
-  const setPreset = (name: ThemePresetName) => {
+  const setPreset = (name: LhThemePresetName) => {
     preset.value = name
     applyPreset(name)
   }
@@ -316,5 +346,5 @@ export function usePresetTheme(options?: {
     return result
   })
 
-  return { preset, setPreset, presets: THEME_PRESETS, themeVars }
+  return { preset, setPreset, presets: LH_THEME_PRESETS, themeVars }
 }

@@ -14,7 +14,7 @@ const mountTimeline = (propsData: Record<string, unknown> = {}, items = 3) => {
   // Host 需声明并透传 props：闭包捕获的 propsData 无法响应外层 setProps
   const Host = defineComponent({
     name: 'TimelineHost',
-    props: ['mode'],
+    props: { mode: { type: String, default: undefined } },
     render(this: Vue & { mode?: string }, h: CreateElement) {
       return h(
         TimelineComp,

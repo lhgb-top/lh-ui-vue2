@@ -61,8 +61,11 @@ const isInGroup = Boolean(group && props.value !== undefined)
 const effectiveSize = computed(() => group?.size.value || props.size)
 const isDisabled = computed(() => Boolean(props.disabled || group?.disabled.value))
 const isChecked = computed(() => {
+  // 独立模式下两侧都未传值时 Object.is(undefined, undefined) 恒真，
+  // 会让未设 value 的单选框默认勾上；group 模式已由 isInGroup 挡住 undefined value
+  if (props.value === undefined) return false
   if (isInGroup && group) return Object.is(group.modelValue.value, props.value)
-  return Object.is(props.modelValue, props.value)
+  return props.modelValue !== undefined && Object.is(props.modelValue, props.value)
 })
 
 function handleChange() {

@@ -1,4 +1,4 @@
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 import type { LhAnchorItem } from '@lh-ui/share/core/anchor'
 
 export interface LhAnchorProps {
@@ -13,7 +13,7 @@ export interface LhAnchorProps {
   /** 平滑滚动 */
   smooth?: boolean
   /** sx 快速布局属性 */
-  sx?: SxProps
+  sx?: LhSxProps
 }
 
 export type { LhAnchorItem, LhFlatAnchorItem } from '@lh-ui/share/core/anchor'

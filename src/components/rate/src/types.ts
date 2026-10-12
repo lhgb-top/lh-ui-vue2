@@ -1,4 +1,4 @@
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 
 export interface LhRateProps {
   /** 当前评分（受控 v-model） */
@@ -17,5 +17,5 @@ export interface LhRateProps {
   /** 分数模板（{n} 占位） */
   scoreTemplate?: string
   /** sx 快速布局属性 */
-  sx?: SxProps
+  sx?: LhSxProps
 }

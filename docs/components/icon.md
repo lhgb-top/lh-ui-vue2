@@ -4,24 +4,29 @@ SVG 图标。按名称渲染，或用 tree-shaking 友好的独立图标组件�
 
 <DemoBlock name="icon" title="基础图标">
 
+<!-- gen-demo-code:begin -->
 ```vue
 <template>
-  <LhIcon name="star" size="24" />
-  <LhIcon name="search" size="24" color="var(--lh-primary-color)" />
-  <LhIcon name="loading" size="24" />
+  <div class="demo-col">
+    <div class="demo-row">
+      <LhIcon name="star" size="24" />
+      <LhIcon name="search" size="24" color="var(--lh-primary-color)" />
+      <LhIcon name="loading" size="24" />
+      <LhIcon name="arrow-down" size="24" />
+      <LhIcon name="check" size="24" color="var(--lh-success-color)" />
+      <LhIcon name="warning" size="24" color="var(--lh-warning-color)" />
+    </div>
+    <div class="demo-row">
+      <LhIcon name="star" size="16" />
+      <LhIcon name="star" size="20" />
+      <LhIcon name="star" size="28" />
+      <LhIcon name="star" size="36" color="var(--lh-danger-color)" />
+    </div>
+  </div>
 </template>
 ```
-
+<!-- gen-demo-code:end -->
 </DemoBlock>
-
-## 独立图标（tree-shaking）
-
-```ts
-import { LhIconStar, LhIconSearch } from '@lh-ui/vue2'
-// 每个图标是独立组件，只打包被引用的 SVG path
-```
-
-可用名称见 `LH_ICON_SVGS_CONST`：star / search / check / close / arrow-up / arrow-down / arrow-left / arrow-right / warning / error / info / loading / plus / minus。
 
 ## Props
 
@@ -31,6 +36,15 @@ import { LhIconStar, LhIconSearch } from '@lh-ui/vue2'
 | size | 尺寸（px） | `string \| number` | — |
 | color | 颜色 | `string` | — |
 | themeVars / bgPattern | 主题覆盖 | — | — |
+
+## 独立图标（tree-shaking）
+
+```ts
+import { LhIconStar, LhIconSearch } from '@lh-ui/vue2'
+// 每个图标是独立组件，只打包被引用的 SVG path
+```
+
+可用名称见 `LH_ICON_SVGS_CONST`：star / search / check / close / arrow-up / arrow-down / arrow-left / arrow-right / warning / error / info / loading / plus / minus。
 
 ## 透传
 

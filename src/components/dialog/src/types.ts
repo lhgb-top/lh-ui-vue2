@@ -1,4 +1,4 @@
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 
 /**
  * Dialog 组件 Props
@@ -37,7 +37,7 @@ export interface LhDialogProps {
   /** 组件级背景花纹，覆盖 ConfigProvider 配置 */
   bgPattern?: string
   /** sx 快速布局属性 */
-  sx?: SxProps
+  sx?: LhSxProps
 }
 
 export interface LhDialogEmits {

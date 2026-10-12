@@ -1,5 +1,5 @@
 import type { InjectionKey, Ref } from 'vue'
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 
 export interface LhBreadcrumbProps {
   /** 分隔符字符 */
@@ -7,7 +7,7 @@ export interface LhBreadcrumbProps {
   /** 最大可见项数（首项 + 省略号 + 末尾若干项），超出折叠；0 或不传表示不折叠 */
   maxItems?: number
   /** sx 快速布局属性 */
-  sx?: SxProps
+  sx?: LhSxProps
 }
 
 export interface LhBreadcrumbItemProps {
@@ -20,7 +20,7 @@ export interface LhBreadcrumbItemProps {
 /** 面包屑父子组件上下文 */
 export interface LhBreadcrumbContext {
   /** 已注册项的 token 列表（setup 顺序即渲染顺序） */
-  itemTokens: Ref<symbol[]>
+  itemTokens: Ref<string[]>
   /** 折叠时需要隐藏的项索引集合 */
   hiddenIndexes: Ref<number[]>
   /** 省略号应插在该索引的项之前（-1 表示不显示） */

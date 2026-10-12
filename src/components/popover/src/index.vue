@@ -59,12 +59,14 @@ export default { name: 'LhPopover' }
 import type { PropType } from 'vue'
 import { useLhPopover } from './index'
 import type { LhPopoverProps, LhPopoverPlacement, LhPopoverTrigger } from './types'
+import { isValidElementOrSelector } from '../../../utils/element-prop'
 
 /**
  * 2.7 type-only defineProps 不支持跨文件 interface：运行时声明 + PropType（AGENTS.md 红线 #2）
  */
 const props = defineProps({
   placement: { type: String as PropType<LhPopoverPlacement>, default: 'top' },
+  flip: { type: Boolean, default: true },
   trigger: { type: String as PropType<LhPopoverTrigger>, default: 'click' },
   title: { type: String, default: undefined },
   visible: { type: Boolean, default: undefined },
@@ -73,9 +75,9 @@ const props = defineProps({
   width: { type: [String, Number] as PropType<LhPopoverProps['width']>, default: undefined },
   popperClass: { type: String, default: undefined },
   teleportTarget: {
-    type: [String, Object] as PropType<LhPopoverProps['teleportTarget']>,
+    validator: isValidElementOrSelector,
     default: 'body',
-  },
+  } as PropType<LhPopoverProps['teleportTarget']>,
   showAfter: { type: Number, default: undefined },
   hideAfter: { type: Number, default: undefined },
   themeVars: { type: Object as PropType<Record<string, string>>, default: undefined },

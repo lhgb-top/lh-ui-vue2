@@ -29,12 +29,44 @@
 
 ## 安装
 
-> `@lh-ui/vue2` 尚未发布到 npm。开发期通过本地 `link:../lh-ui-share` 工作区依赖消费 `@lh-ui/share`，
-> 需先把 share 构建出来：
+```bash
+npm install @lh-ui/vue2
+# 或
+pnpm add @lh-ui/vue2
+# 或
+yarn add @lh-ui/vue2
+```
+
+`@lh-ui/vue2` 的唯一运行时依赖是 `@lh-ui/share`（共享层：core 纯函数 / theme / constants / locales / types / 组件样式源），会自动一并安装。
+
+### 私有服务器安装
+
+若包托管在私有服务器而非公共 registry，按以下方式安装。
+
+**方式一：tarball 直链**（服务器仅提供静态文件托管即可）
 
 ```bash
-cd lh-ui-share && pnpm install && pnpm build
-cd ../lh-ui-vue2 && pnpm install
+npm install https://你的域名/pkg/lh-ui-vue2-1.0.0.tgz
+# 或
+pnpm add https://你的域名/pkg/lh-ui-vue2-1.0.0.tgz
+# 或
+yarn add https://你的域名/pkg/lh-ui-vue2-1.0.0.tgz
+```
+
+> tarball 直链方式下，`@lh-ui/share` 仍会从当前 registry 解析，需保证该包在公共 registry 或你的私有 registry 上可见。
+
+**方式二：自建 registry**（如 Verdaccio，支持 semver 拉取与版本管理）
+
+在项目根目录的 `.npmrc` 中按 scope 精准路由，不影响其他包的安装源：
+
+```ini
+@lh-ui:registry=https://你的域名/
+```
+
+随后照常安装：
+
+```bash
+pnpm add @lh-ui/vue2
 ```
 
 ## 快速上手
@@ -82,16 +114,26 @@ Vue.use(LhInput)
 - **预设主题**：`usePresetTheme`（青花瓷、松花绿等），`useLhTheme` 负责明暗切换并 localStorage 持久化。
 - **局部覆盖优先级**：组件 `themeVars` prop > `ConfigProvider.componentTheme[name]` > 全局 `themeVars`。
 
+## 事件名约定（重要）
+
+本库组件事件名为 **camelCase**（如 `@sort-change` 不可用，应写 `@sortChange`、`@rowClick`、`@update:expandedKeys`）：
+
+- **SFC 模板 / JSX / render 函数**中正常工作（推荐用法）；
+- **in-DOM 模板**（直接写在 HTML 里的模板）会被浏览器转小写导致事件失联——请避免 in-DOM 模板，或用 `.sync` / `v-on` 对象语法（`v-on` 对象的键不受浏览器小写化影响）；
+- 双向绑定统一走 `.sync`（编译器会自动 camel 化 `update:xxx`），不受此限制。
+
 ## 组件
+
+58 个组件，六大组（与文档站导航一致，完整清单见[在线文档](https://lh-ui.lhgb.top/vue2/)）：
 
 | 分类 | 组件 |
 | --- | --- |
-| 基础 | ConfigProvider、Button、Icon |
-| 数据录入 | Input、Select、Checkbox、CheckboxGroup、Radio、RadioGroup、Switch |
-| 反馈与展示 | Dialog、Tooltip、Tag、Form、FormItem |
-
-开发中（目录与单测已就绪，尚未登记全量入口）：Alert、Avatar、Badge、Card、Divider、Empty、
-Progress、Skeleton、Space、Spinner。
+| 基础 | ConfigProvider、Button、Icon、Tag、Divider、Space、Card |
+| 布局 | Grid（Row/Col）、Layout、Collapse、Descriptions |
+| 数据录入 | Input、InputNumber、Select、Checkbox、CheckboxGroup、Radio、RadioGroup、Switch、Slider、Rate、Segmented、Form、FormItem、Upload、Transfer、TimePicker、DatePicker、Cascader、AutoComplete |
+| 数据展示 | Badge、Avatar、Spin、Table、Tag、Skeleton、Empty、Statistic、Timeline、Image、Carousel、Collapse、Descriptions、Tree、TreeSelect |
+| 反馈 | Alert、Progress、Message、Notification、Loading、Dialog、Drawer、Tooltip、Popover、Popconfirm、Image |
+| 导航 | Breadcrumb、Pagination、Tabs、Steps、Dropdown、Menu、Anchor、Backtop、Affix |
 
 ## 开发
 
@@ -103,11 +145,42 @@ Progress、Skeleton、Space、Spinner。
 | Lint / 自动修复 | `pnpm lint` / `pnpm lint:fix` |
 | 类型检查 | `pnpm typecheck` |
 | 构建（esm + cjs + umd + styles + dts） | `pnpm build` |
-| demo 构建并归位文档站 | `pnpm build:demo` |
 | 发版说明 | `pnpm changeset` |
 
-文档站点基于 VitePress，组件示例采用 iframe 沙箱方案（Vue2 组件无法在 Vue3 的 VitePress 内直接渲染），
-改 demo 后需重跑 `pnpm build:demo`。
+文档站点基于 VuePress 1.x（Vue 2.7 原生），组件示例由 DemoBlock 直接活渲染
+`dev/demos/index.ts` 注册表（与 dev 沙箱同源），docs:dev 下改 demo 即时热更新。
+
+## 发布
+
+发布侧统一用 `npm publish`（pnpm 无 publish 命令，yarn v2+ 已移除）；包管理器差异只在消费侧安装。
+**发版顺序硬约束：`@lh-ui/share` 先发版**（`dependencies` 语义版本已发布才可发）。
+
+```bash
+# 0. 一次性：登录 npm，并拥有 @lh-ui scope（在 npm 创建 organization 或个人 scope）
+npm login
+
+# 1. 先发 share（硬约束）
+cd ../lh-ui-share
+pnpm build && pnpm verify:dts && pnpm verify:styles
+npm publish --access public            # 发布 @lh-ui/share@0.1.0
+
+# 2. 再发 vue2
+cd ../lh-ui-vue2
+pnpm install                           # 重新解析 @lh-ui/share ^0.1.0，生成新 pnpm-lock.yaml
+pnpm changeset version                 # 消费 changeset → 打版本号 + 生成 CHANGELOG.md
+pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm verify:dts   # 完整回归
+npm pack --dry-run                     # 检查 files 白名单
+npm publish --access public            # 触发 prepublishOnly（build + verify:dts）
+```
+
+> **版本协调陷阱**：share 仓库可能还有未消费的 changeset。**发版前不要在 share 仓库跑
+> `pnpm changeset version`**——那会把 share bump 到 0.2.0，而本库依赖锁死在 `^0.1.0`
+> （semver `^0.1.0` = `>=0.1.0 <0.2.0`，major 为 0 时 caret 锁死 minor），会匹配不到。
+> 正确做法：share 直接发当前已 versioned 的 0.1.0；待那批 changeset 消费出 0.2.0 时，
+> 本库同步把依赖改为 `^0.2.0` + 回归 + 再发版。
+
+发布私有服务器（如 Verdaccio）时加 `--registry` 指向私有源，或先把 `npm pack` 产出的
+`lh-ui-vue2-x.y.z.tgz` 上传到服务器静态目录后按上文「私有服务器安装」使用。
 
 ## 约定与规范
 
@@ -120,5 +193,5 @@ Progress、Skeleton、Space、Spinner。
 ## 文档
 
 - 在线文档：<https://lh-ui.lhgb.top/vue2/>
-- 家族总纲：[`lh-ui-plus/ai/多端组件库规划.md`](../lh-ui-plus/ai/多端组件库规划.md)
-- Vue2 细节：[`lh-ui-plus/ai/vue2组件库计划.md`](../lh-ui-plus/ai/vue2组件库计划.md)
+- 家族总纲：[`docs/多端组件库规划.md`](../docs/多端组件库规划.md)
+- Vue2 细节：[`docs/vue2/vue2组件库计划.md`](../docs/vue2/vue2组件库计划.md)

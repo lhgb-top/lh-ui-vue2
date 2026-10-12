@@ -1,4 +1,4 @@
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 import type { LhMessageRecord, LhMessageType } from '@lh-ui/share/core/message'
 
 /** 服务选项：字符串内容 + 展示与回调 */
@@ -14,7 +14,7 @@ export interface LhMessageOptions {
   /** 距视口顶部偏移 px（默认 20） */
   offset?: number
   /** sx 快速布局属性 */
-  sx?: SxProps
+  sx?: LhSxProps
   /** 关闭（含自动关闭与手动关闭）后的回调 */
   onClose?: () => void
 }
@@ -31,7 +31,7 @@ export interface LhMessageProps {
   showClose?: boolean
   /** 关闭按钮的无障碍名称（未传时取语言包 message.close） */
   closeLabel?: string
-  sx?: SxProps
+  sx?: LhSxProps
 }
 
 /** 全局默认配置项（LhMessage.config） */

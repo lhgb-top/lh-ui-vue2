@@ -19,7 +19,7 @@ export default { name: 'LhDropdownItem' }
 <script lang="ts" setup>
 import type { PropType } from 'vue'
 import { computed, inject, onBeforeUnmount, onMounted, ref } from 'vue'
-import type { DropdownItemRecord } from './types'
+import type { LhDropdownItemRecord } from './types'
 import { LH_DROPDOWN_KEY } from './types'
 import { getDropdownItemClass } from '@lh-ui/share/core/dropdown'
 
@@ -37,7 +37,7 @@ const emit = defineEmits(['click'])
 const rootRef = ref<HTMLElement | null>(null)
 const ctx = inject(LH_DROPDOWN_KEY, null)
 
-const record: DropdownItemRecord = {
+const record: LhDropdownItemRecord = {
   get el() {
     return rootRef.value as HTMLElement
   },

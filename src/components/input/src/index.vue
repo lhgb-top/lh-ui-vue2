@@ -67,7 +67,7 @@
       >
         <span v-if="props.prefixIcon" class="lh-input__prefix">
           <slot name="prefix">
-            <i :class="props.prefixIcon"></i>
+            <LhIcon :name="props.prefixIcon" />
           </slot>
         </span>
         <input
@@ -92,7 +92,7 @@
         />
         <span v-if="props.suffixIcon || props.clearable" class="lh-input__suffix">
           <slot name="suffix">
-            <i v-if="props.suffixIcon" :class="props.suffixIcon"></i>
+            <LhIcon v-if="props.suffixIcon" :name="props.suffixIcon" />
             <svg
               v-if="props.clearable && inputValue"
               class="lh-input__suffix-icon lh-input__clear"
@@ -123,6 +123,7 @@ import { computed, watch } from 'vue'
 import type { PropType } from 'vue'
 import { useLhInput } from './index'
 import type { LhInputProps, LhInputSize, LhInputType } from './types'
+import LhIcon from '../../icon'
 import { t } from '../../../locale'
 
 const props = defineProps({

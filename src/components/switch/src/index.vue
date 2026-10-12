@@ -2,8 +2,8 @@
   <div
     :class="switchClasses"
     role="switch"
-    :aria-checked="state.checked"
-    :aria-disabled="state.disabled"
+    :aria-checked="state.checked ? 'true' : 'false'"
+    :aria-disabled="state.disabled ? 'true' : 'false'"
     :aria-invalid="!!formItem?.errorMessage || undefined"
     tabindex="0"
     :style="sxStyle"

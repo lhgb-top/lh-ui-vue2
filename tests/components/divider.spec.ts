@@ -31,13 +31,17 @@ describe('LhDivider', () => {
     expect(wrapper.find('.lh-divider__label').text()).toBe('章节标题')
   })
 
-  it('vertical dividers never expose label content', () => {
+  it('vertical dividers render label content with separator semantics', () => {
     const wrapper = mount(LhDivider, {
       propsData: { direction: 'vertical' },
-      slots: { default: '不应渲染' },
+      slots: { default: '分组' },
     })
-    expect(wrapper.classes()).not.toContain('lh-divider--with-text')
-    expect(wrapper.find('.lh-divider__label').exists()).toBe(false)
+    expect(wrapper.classes()).toContain('lh-divider--with-text')
+    // labelPosition 是横向语义，竖向文案恒居中，不产出修饰类
+    expect(wrapper.classes()).not.toContain('lh-divider--label-center')
+    expect(wrapper.attributes('role')).toBe('separator')
+    expect(wrapper.attributes('aria-orientation')).toBe('vertical')
+    expect(wrapper.find('.lh-divider__label').text()).toBe('分组')
   })
 
   it('applies sx props as inline styles on the root element', () => {

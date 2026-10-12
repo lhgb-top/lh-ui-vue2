@@ -1,4 +1,4 @@
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import {
   flattenAnchorItems,
   getAnchorClassNames,
@@ -79,16 +79,27 @@ export function useLhAnchor(props: LhAnchorProps, emit: LhAnchorEmits) {
     })
   }
 
-  onMounted(() => {
+  function attachListeners(): void {
     scrollTarget = resolveScrollTarget()
     scrollTarget.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', onScroll)
     updateActive()
-  })
+  }
 
-  onBeforeUnmount(() => {
+  function detachListeners(): void {
     scrollTarget?.removeEventListener('scroll', onScroll)
     window.removeEventListener('resize', onScroll)
+  }
+
+  onMounted(attachListeners)
+
+  onBeforeUnmount(detachListeners)
+
+  // target 变化（如父级 ref 在 mounted 后才赋值，:target="$refs.x" 场景）：
+  // 先按旧目标解绑，再重新解析并换绑，保证运行时切容器立即生效
+  watch(() => props.target, () => {
+    detachListeners()
+    attachListeners()
   })
 
   function linkClasses(id: string, level: number): string[] {

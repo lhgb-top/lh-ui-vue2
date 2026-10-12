@@ -9,8 +9,8 @@ import type { LhDividerProps } from './types'
 export function useLhDivider(props: LhDividerProps) {
   const slots = useSlots()
 
-  // 垂直方向不支持文案（各开源库通行约定）
-  const hasContent = computed(() => props.direction === 'horizontal' && !!slots.default)
+  // 有子节点即带文案：横向左右排布，竖向上下排布（竖向布局由 share 的纵向 flex 承载）
+  const hasContent = computed(() => !!slots.default)
 
   const dividerClasses = computed(() =>
     getDividerClassNames({

@@ -1,7 +1,9 @@
 import Vue from 'vue'
 import LhUIVue2 from '../src'
-import '@lh-ui/share/theme.css'
-import '@lh-ui/share/styles.css'
+// 样式走 share 源码实时编译（本地联动）：家族布局下 alias 到同级 share 仓 styles/，
+// 改 share 样式即时生效；CI 单仓 clone 时回退 npm 包的 ./styles/index.scss
+import '@lh-ui/share/styles/index.scss'
+import './demo.css'
 import './demos'
 
 // playground：全量注册冒烟

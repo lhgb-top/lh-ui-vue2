@@ -3,6 +3,7 @@
     :class="['lh-icon', props.name ? `lh-icon--${props.name}` : '']"
     :style="mergedStyle"
     v-bind="$attrs"
+    v-on="$listeners"
   >
     <svg
       v-if="svgPath"

@@ -2,18 +2,55 @@
 
 单独勾选或成组使用（`LhCheckboxGroup`）。组内通过 `value` 标识成员，group 的 disabled/size 对子项生效。
 
-<DemoBlock name="checkbox" title="多选框" :height="240">
+<DemoBlock name="checkbox" title="多选框" :height="230">
 
+<!-- gen-demo-code:begin -->
 ```vue
 <template>
-  <LhCheckbox v-model="single" label="单独勾选" />
-  <LhCheckboxGroup v-model="picked">
-    <LhCheckbox label="山水" value="shan" />
-    <LhCheckbox label="花鸟" value="hua" />
-  </LhCheckboxGroup>
+  <div class="demo-col" style="gap: 18px">
+    <div class="demo-row" style="gap: 20px; flex-wrap: wrap">
+      <LhCheckbox v-model="single" label="单独勾选" name="agree" />
+      <LhCheckbox v-model="indeterminate" label="全选" indeterminate />
+      <LhCheckbox v-model="disabledSingle" label="禁用" disabled />
+    </div>
+    <div>
+      <LhCheckboxGroup v-model="picked" name="themes">
+        <LhCheckbox label="山水" value="shan" />
+        <LhCheckbox label="花鸟" value="hua" />
+        <LhCheckbox label="人物" value="ren" disabled />
+      </LhCheckboxGroup>
+    </div>
+    <div>
+      <LhCheckboxGroup v-model="picked" disabled>
+        <LhCheckbox label="山水" value="shan" />
+        <LhCheckbox label="花鸟" value="hua" />
+      </LhCheckboxGroup>
+      <p class="demo-note">整组 disabled</p>
+    </div>
+    <div class="demo-row" style="gap: 20px; flex-wrap: wrap; align-items: center">
+      <LhCheckboxGroup v-model="picked" size="small">
+        <LhCheckbox label="山水" value="shan" />
+      </LhCheckboxGroup>
+      <LhCheckboxGroup v-model="picked" size="large">
+        <LhCheckbox label="山水" value="shan" />
+      </LhCheckboxGroup>
+    </div>
+    <p class="demo-note">组值：{{ JSON.stringify(picked) }}</p>
+  </div>
 </template>
-```
 
+<script>
+export default {
+  data: () => ({
+    single: true,
+    indeterminate: true,
+    disabledSingle: false,
+    picked: ['shan'],
+  }),
+}
+</script>
+```
+<!-- gen-demo-code:end -->
 </DemoBlock>
 
 ## Checkbox Props
@@ -35,4 +72,9 @@
 
 ## Events
 
-`input`（v-model）、`change (checked)`；group 同名事件汇总子项变化。
+| 事件 | 说明 | 回调参数 |
+| --- | --- | --- |
+| input | v-model 事件 | — |
+| change | 选中状态变化时触发 | `(checked)` |
+
+group 同名事件汇总子项变化。

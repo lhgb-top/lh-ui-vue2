@@ -15,11 +15,11 @@ import type {
   LhNotificationType,
 } from './types'
 
-interface MountedHost {
+interface LhMountedHost {
   destroy: () => void
 }
 
-let host: MountedHost | null = null
+let host: LhMountedHost | null = null
 
 function resolveContainer(): HTMLElement {
   const target = notificationConfig.appendTo

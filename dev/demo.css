@@ -3,7 +3,10 @@ body {
   margin: 0;
   padding: 16px;
   font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-  color: var(--lh-text-color, #333);
+  /* 文字/背景令牌必须与 share 的命名一致：--lh-text-primary / --lh-bg-color
+     （曾误用不存在的 --lh-text-color，导致暗色下恒回退 #333 黑字） */
+  color: var(--lh-text-primary, #2c2c2c);
+  background: var(--lh-bg-color, #faf6f0);
 }
 .demo-row {
   display: flex;
@@ -20,5 +23,33 @@ body {
 .demo-note {
   margin: 0;
   font-size: 12px;
-  color: var(--lh-text-color-secondary, #888);
+  color: var(--lh-text-secondary, #8a8a8a);
+}
+/* anchor / affix / backtop demo 的滚动容器与段落（沙箱示例样式，库本身不提供） */
+.anchor-scroller {
+  height: 240px;
+  width: 380px;
+  overflow-y: auto;
+  border: 1px solid var(--lh-border-color, #d9d0c2);
+  border-radius: 8px;
+  padding: 0 16px;
+}
+.anchor-sec {
+  padding: 16px 0;
+  border-bottom: 1px dashed var(--lh-border-color, #d9d0c2);
+}
+.anchor-sec h3 {
+  margin: 0 0 8px;
+}
+.anchor-sec p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--lh-text-secondary, #8a8a8a);
+}
+.affix-bar {
+  padding: 8px 16px;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--lh-primary-color, #7c5c3e);
+  font-size: 13px;
 }

@@ -1,12 +1,14 @@
 <template>
   <!-- 2.7 单根限制：plus 的 template v-if 双 li 根改为 display:contents 中性容器包裹
-       （breadcrumb 样式无 > 子代选择器依赖，布局不受影响） -->
+       （breadcrumb 样式无 > 子代选择器依赖，布局不受影响）。
+       隐藏项用 v-show 保持挂载：折叠项若 v-if 移出 DOM，父级按 DOM 位序重排会丢 uid -->
   <span
-    v-if="ownIndex >= 0 && !isHidden"
+    v-if="ownIndex >= 0"
+    :data-lh-bc-item="uid"
     style="display: contents"
   >
     <li
-      v-if="showEllipsisBefore"
+      v-show="showEllipsisBefore"
       class="lh-breadcrumb__ellipsis"
     >
       <button
@@ -20,7 +22,10 @@
         >•••</span>
       </button>
     </li>
-    <li :class="itemClasses">
+    <li
+      v-show="!isHidden"
+      :class="itemClasses"
+    >
       <a
         v-if="isLink"
         :href="to"
@@ -65,7 +70,7 @@ const props = defineProps({
   replace: { type: Boolean, default: false },
 })
 
-const { ownIndex, isLast, isHidden, showEllipsisBefore, isLink, itemClasses, separatorText, expand } =
+const { ownIndex, uid, isLast, isHidden, showEllipsisBefore, isLink, itemClasses, separatorText, expand } =
   useLhBreadcrumbItem(props)
 
 const moreLabel = computed(() => t('breadcrumb.more', '更多'))

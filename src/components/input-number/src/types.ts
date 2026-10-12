@@ -1,5 +1,5 @@
 import type { LhComponentSize } from '@lh-ui/share/core/shared'
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 
 export interface LhInputNumberProps {
   modelValue?: number | null
@@ -14,7 +14,7 @@ export interface LhInputNumberProps {
   placeholder?: string
   name?: string
   /** sx 快速布局属性 */
-  sx?: SxProps
+  sx?: LhSxProps
 }
 
 export type LhInputNumberSize = LhComponentSize

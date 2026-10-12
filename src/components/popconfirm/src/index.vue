@@ -82,6 +82,7 @@ import type {
   LhPopconfirmType,
   LhPopconfirmTrigger,
 } from './types'
+import { isValidElementOrSelector } from '../../../utils/element-prop'
 
 /**
  * 2.7 type-only defineProps 不支持跨文件 interface：运行时声明 + PropType（AGENTS.md 红线 #2）
@@ -89,6 +90,7 @@ import type {
 const props = defineProps({
   type: { type: String as PropType<LhPopconfirmType>, default: 'warning' },
   placement: { type: String as PropType<LhPopconfirmPlacement>, default: 'top' },
+  flip: { type: Boolean, default: true },
   trigger: { type: String as PropType<LhPopconfirmTrigger>, default: 'click' },
   title: { type: String, default: undefined },
   confirmText: { type: String, default: undefined },
@@ -99,9 +101,9 @@ const props = defineProps({
   showIcon: { type: Boolean, default: true },
   popperClass: { type: String, default: undefined },
   teleportTarget: {
-    type: [String, Object] as PropType<LhPopconfirmProps['teleportTarget']>,
+    validator: isValidElementOrSelector,
     default: 'body',
-  },
+  } as PropType<LhPopconfirmProps['teleportTarget']>,
   showAfter: { type: Number, default: undefined },
   hideAfter: { type: Number, default: undefined },
   themeVars: { type: Object as PropType<Record<string, string>>, default: undefined },

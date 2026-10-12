@@ -22,6 +22,7 @@ export default { name: 'LhAffix' }
 import type { PropType } from 'vue'
 import { useLhAffix } from './index'
 import type { LhAffixProps } from './types'
+import { isValidElementOrSelector } from '../../../utils/element-prop'
 
 /**
  * 2.7 type-only defineProps 不支持跨文件 interface：运行时声明 + PropType（红线 #2）
@@ -29,7 +30,7 @@ import type { LhAffixProps } from './types'
 const props = defineProps({
   offsetTop: { type: Number, default: 0 },
   offsetBottom: { type: Number, default: 0 },
-  target: { type: [String, Object] as PropType<string | HTMLElement>, default: undefined },
+  target: { validator: isValidElementOrSelector, default: undefined } as PropType<string | HTMLElement>,
   sx: { type: [Object, Array, String] as PropType<LhAffixProps['sx']>, default: undefined },
 })
 

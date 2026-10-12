@@ -1,4 +1,4 @@
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 
 export type { LhLoadingHandle, LhLoadingOptions } from '@lh-ui/share/core/loading'
 
@@ -14,5 +14,5 @@ export interface LhLoadingMaskProps {
   zIndex?: number
   /** 是否显示旋转图标（默认 true） */
   spinner?: boolean
-  sx?: SxProps
+  sx?: LhSxProps
 }

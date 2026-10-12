@@ -7,11 +7,20 @@
     }"
     @focusout="handleFocusout"
   >
-    <label v-if="props.label" class="lh-form-item__label" :style="labelStyle">
+    <label
+      v-if="props.label"
+      class="lh-form-item__label"
+      :style="labelStyle"
+      @click.prevent="focusControl"
+    >
       <span v-if="props.required" class="lh-form-item__required">*</span>
       {{ props.label }}
     </label>
-    <div class="lh-form-item__content" :aria-describedby="errorMessage ? errorId : undefined">
+    <div
+      ref="contentRef"
+      class="lh-form-item__content"
+      :aria-describedby="errorMessage ? errorId : undefined"
+    >
       <slot></slot>
       <span v-if="errorMessage" :id="errorId" class="lh-form-item__error" role="alert">{{
         errorMessage
@@ -84,7 +93,24 @@ onBeforeUnmount(() => {
   unregisterField?.()
 })
 
-function handleFocusout() {
+const contentRef = ref<HTMLElement | null>(null)
+
+/**
+ * 点击标签聚焦控件：slot 里的控件 id 无法静态得知，退而求其次
+ * 聚焦内容区第一个可聚焦元素（label 的 for 关联需要控件 id，此处不适用）
+ */
+function focusControl() {
+  const target = contentRef.value?.querySelector<HTMLElement>(
+    'input:not([type="hidden"]), textarea, select, button, [tabindex]:not([tabindex="-1"])'
+  )
+  target?.focus()
+}
+
+function handleFocusout(event: FocusEvent) {
+  // 焦点在 item 内部移动（控件 ↔ 控件 / 标签）不触发校验，只有真正离开才校验，
+  // 否则中途焦点切换会闪出错误态
+  const next = event.relatedTarget as Node | null
+  if (next && (event.currentTarget as HTMLElement).contains(next)) return
   void validate()
 }
 

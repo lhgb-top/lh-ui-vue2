@@ -1,4 +1,4 @@
-import type { SxProps } from '@lh-ui/share/core/shared/sx'
+import type { LhSxProps } from '@lh-ui/share/core/shared/sx'
 
 /**
  * Tooltip 类型
@@ -16,6 +16,8 @@ export interface LhTooltipProps {
   content?: string
   /** 展示位置 */
   placement?: LhTooltipPlacement
+  /** 主轴方向空间不足时是否翻转方向（默认开启）；设 false 则严格按 placement 定位，允许溢出视口 */
+  flip?: boolean
   /** 触发方式 */
   trigger?: LhTooltipTrigger
   /** 是否禁用 */
@@ -47,5 +49,5 @@ export interface LhTooltipProps {
   /** 组件级背景花纹，覆盖 ConfigProvider 配置 */
   bgPattern?: string
   /** sx 快速布局属性（作用于触发器根元素） */
-  sx?: SxProps
+  sx?: LhSxProps
 }

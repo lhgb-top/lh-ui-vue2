@@ -112,4 +112,20 @@ describe('LhSteps', () => {
     expect(wrapper.find('.lh-steps--vertical').exists()).toBe(true)
     wrapper.destroy()
   })
+
+  it('字符串型 current 归一化：当前步高亮且可点击', async () => {
+    // current 可能以字符串传入（路由参数等）：旧实现「数字 === 字符串」恒不等，
+    // 当前步不高亮，且点击当前步会误触发 change
+    const wrapper = mountSteps({ current: '1', clickable: true })
+    const items = wrapper.findAll('.lh-steps__item')
+    expect(items.at(0)!.classes()).toContain('lh-steps__item--finish')
+    expect(items.at(1)!.classes()).toContain('lh-steps__item--process')
+    // 点当前步不触发（归一化后命中去重守卫）
+    await items.at(1)!.find('button.lh-steps__head').trigger('click')
+    expect(wrapper.emitted('change')).toBeFalsy()
+    // 点历史步正常触发
+    await items.at(0)!.find('button.lh-steps__head').trigger('click')
+    expect(wrapper.emitted('change')).toBeTruthy()
+    wrapper.destroy()
+  })
 })

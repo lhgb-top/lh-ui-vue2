@@ -7,6 +7,7 @@ import {
   stepRate,
 } from '@lh-ui/share/core/rate'
 import { sxToStyle } from '@lh-ui/share/core/shared/sx'
+import { LH_KEYS } from '@lh-ui/share/core/shared/keyboard'
 import { t } from '../../../locale'
 import type { LhRateProps } from './types'
 
@@ -56,12 +57,12 @@ export function useLhRate(props: LhRateProps, emit: LhRateEmits) {
     if (props.disabled) return
     const max = props.max ?? 5
     const actions: Record<string, () => void> = {
-      ArrowRight: () => commit(stepRate(value.value, 1, !!props.allowHalf, max)),
-      ArrowUp: () => commit(stepRate(value.value, 1, !!props.allowHalf, max)),
-      ArrowLeft: () => commit(stepRate(value.value, -1, !!props.allowHalf, max)),
-      ArrowDown: () => commit(stepRate(value.value, -1, !!props.allowHalf, max)),
-      Home: () => commit(0),
-      End: () => commit(max),
+      [LH_KEYS.ArrowRight]: () => commit(stepRate(value.value, 1, !!props.allowHalf, max)),
+      [LH_KEYS.ArrowUp]: () => commit(stepRate(value.value, 1, !!props.allowHalf, max)),
+      [LH_KEYS.ArrowLeft]: () => commit(stepRate(value.value, -1, !!props.allowHalf, max)),
+      [LH_KEYS.ArrowDown]: () => commit(stepRate(value.value, -1, !!props.allowHalf, max)),
+      [LH_KEYS.Home]: () => commit(0),
+      [LH_KEYS.End]: () => commit(max),
     }
     const action = actions[event.key]
     if (action) {

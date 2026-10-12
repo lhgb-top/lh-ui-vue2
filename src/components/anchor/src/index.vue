@@ -31,13 +31,14 @@ import type { PropType } from 'vue'
 import { useLhAnchor } from './index'
 import type { LhAnchorItem } from '@lh-ui/share/core/anchor'
 import type { LhAnchorProps } from './types'
+import { isValidElementOrSelector } from '../../../utils/element-prop'
 
 /**
  * 2.7 type-only defineProps 不支持跨文件 interface：运行时声明 + PropType（红线 #2）
  */
 const props = defineProps({
   items: { type: Array as PropType<LhAnchorItem[]>, required: true },
-  target: { type: [String, Object] as PropType<string | HTMLElement>, default: undefined },
+  target: { validator: isValidElementOrSelector, default: undefined } as PropType<string | HTMLElement>,
   offset: { type: Number, default: 0 },
   direction: { type: String as PropType<'vertical' | 'horizontal'>, default: 'vertical' },
   smooth: { type: Boolean, default: true },
